@@ -30,12 +30,12 @@ import { BG_COLOR } from './src/utilities';
 
 function App(): JSX.Element {
   const [isLogin, setIsLogin] = useState<boolean>(true);
+  const [role, setRole] = useState<string>('user');
   return (
     <Provider theme={{ version: 2 }}>
       <StatusBar barStyle="light-content" backgroundColor={BG_COLOR} />
-      {isLogin ?
+      {!isLogin ? <DangNhap /> : isLogin && role == 'ntn' ? <>{(console.log('Dang nhap ntn'))}</> :
         <BottomTab />
-        : <DangNhap />
       }
     </Provider>
   );
