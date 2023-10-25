@@ -1,6 +1,8 @@
 import { Alert, Image, Modal, Pressable, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useState } from 'react'
 import COLOR, { BG_COLOR, BUTTON_COLOR, HEIGHT, WIDTH } from '../../utilities';
+import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
+import Realm from 'realm';
 
 interface Item {
     id: number;
@@ -17,6 +19,36 @@ const DangNhap = () => {
                 <Text style={[{ fontSize: 17, fontWeight: '500', color: focus === item.id ? '#ff8800' : '#626262' },]}>{item.name}</Text>
             </Pressable>
         )
+    }
+    const app = new Realm.App({
+        id: "application-0-kbkng",
+    });
+    GoogleSignin.configure({
+        webClientId: '866351015855-c5ndv8jah0pbh3btmt4rj8dvkdr2jtjs.apps.googleusercontent.com',
+    });
+    // Handle user state changes
+    async function onGoogleButtonPress() {
+        // Check if your device supports Google Play
+        try {
+            // Sign into Google
+            await GoogleSignin.hasPlayServices();
+            const { idToken }: any = await GoogleSignin.signIn();
+            // use Google ID token to sign into Realm
+            const credential = Realm.Credentials.google({ idToken });
+            const user = await app.logIn(credential);
+            console.log("signed in as Realm user", user.id);
+        } catch (error: any) {
+            // handle errors
+            if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+                // user cancelled the login flow
+            } else if (error.code === statusCodes.IN_PROGRESS) {
+                // operation (e.g. sign in) is in progress already
+            } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+                // play services not available or outdated
+            } else {
+                // some other error happened
+            }
+        }
     }
     return (
         <View style={{ backgroundColor: COLOR.white, width: WIDTH, height: HEIGHT, justifyContent: 'center' }}>
@@ -54,7 +86,7 @@ const DangNhap = () => {
                         onPress={() => setModalVisible(true)}>
                         <Text style={{ fontSize: 20, fontWeight: 'bold', color: COLOR.gray }}>{choseSchool}</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={[{ width: '80%', height: 45, borderRadius: 10, justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: '#d6d6d6', backgroundColor: BUTTON_COLOR }, styles.elevation]}>
+                    <TouchableOpacity onPress={onGoogleButtonPress} style={[{ width: '80%', height: 45, borderRadius: 10, justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: '#d6d6d6', backgroundColor: BUTTON_COLOR }, styles.elevation]}>
 
                         <Text style={{ fontSize: 20, fontWeight: 'bold', color: COLOR.white }}>Google</Text>
                     </TouchableOpacity>
