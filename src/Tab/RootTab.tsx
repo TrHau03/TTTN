@@ -1,5 +1,5 @@
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import { CaiDatNavigation, LichSuNavigation, LienHeNavigation, TrangChuNavigation } from "../Stack/StackNavigation";
+import { CaiDatNVHCNavigation, CaiDatNavigation, LichSuNVHCNavigation, LichSuNavigation, LienHeNavigation, TrangChuNVHCNavigation, TrangChuNavigation } from "../Stack/StackNavigation";
 import COLOR, { BG_COLOR } from "../utilities";
 
 export enum RootTabScreenENum {
@@ -7,6 +7,9 @@ export enum RootTabScreenENum {
     StackLichSu = 'Lịch sử',
     StackLienHe = 'Liên hệ',
     StackCaiDat = 'Cài đặt',
+    StackTrangChuNVHC = 'Trang chủ',
+    StackLichSuNVHC = 'Lịch sử',
+    StackCaiDatNVHC = 'Cài đặt',
 };
 
 export type RootTabParamList = {
@@ -14,15 +17,27 @@ export type RootTabParamList = {
     StackLichSu: undefined,
     StackLienHe: undefined,
     StackCaiDat: undefined,
+    StackTrangChuNVHC: undefined,
+    StackLichSuNVHC: undefined,
+    StackCaiDatNVHC: undefined,
 };
 
-export const RootBottomTab = () => {
+export const RootBottomTabGiangVien = () => {
 
     const Screens: any[] = [
         { id: 1, name: RootTabScreenENum.StackTrangChu, component: TrangChuNavigation, option: {} },
         { id: 2, name: RootTabScreenENum.StackLichSu, component: LichSuNavigation, option: {} },
         { id: 3, name: RootTabScreenENum.StackLienHe, component: LienHeNavigation, option: {} },
         { id: 4, name: RootTabScreenENum.StackCaiDat, component: CaiDatNavigation, option: {} },
+    ]
+    return Screens;
+}
+export const RootBottomTabNVHC = () => {
+
+    const Screens: any[] = [
+        { id: 1, name: RootTabScreenENum.StackTrangChuNVHC, component: TrangChuNVHCNavigation, option: {} },
+        { id: 2, name: RootTabScreenENum.StackLichSuNVHC, component: LichSuNVHCNavigation, option: {} },
+        { id: 4, name: RootTabScreenENum.StackCaiDatNVHC, component: CaiDatNVHCNavigation, option: {} },
     ]
     return Screens;
 }

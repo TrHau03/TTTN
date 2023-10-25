@@ -5,6 +5,9 @@ import { RootStackTrangChu, configStack } from './RootStackTrangChu';
 import { RootStackLichsu } from './RootStackLichSu';
 import { RootStackLienHe } from './RootStackLienHe';
 import { RootStackCaiDat } from './RootStackCaiDat';
+import { RootStackTrangChuNVHC } from './RootStackTrangChuNVHC';
+import { RootStackLichSuNVHC } from './RootStackLichSuNVHC';
+import { RootStackCaiDatNVHC } from './RootStackCaiDatNVHC';
 
 const Stack = createNativeStackNavigator();
 export const TrangChuNavigation = () => {
@@ -40,3 +43,27 @@ export const CaiDatNavigation = () => {
     </Stack.Navigator>
 }
 
+export const TrangChuNVHCNavigation = () => {
+
+    return <Stack.Navigator initialRouteName='TrangChu' screenOptions={(props) => configStack(props)} >
+        {RootStackTrangChuNVHC().map((item: any) => {
+            return <Stack.Screen key={item.id} name={item.name} component={item.component} options={item.options} />
+        })}
+    </Stack.Navigator>
+}
+export const LichSuNVHCNavigation = () => {
+
+    return <Stack.Navigator initialRouteName='TrangChu' screenOptions={(props) => configStack(props)} >
+        {RootStackLichSuNVHC().map((item: any) => {
+            return <Stack.Screen key={item.id} name={item.name} component={item.component} options={item.options} />
+        })}
+    </Stack.Navigator>
+}
+export const CaiDatNVHCNavigation = () => {
+
+    return <Stack.Navigator initialRouteName='TrangChu' screenOptions={(props) => configStack(props)} >
+        {RootStackCaiDatNVHC().map((item: any) => {
+            return <Stack.Screen key={item.id} name={item.name} component={item.component} options={item.options} />
+        })}
+    </Stack.Navigator>
+}

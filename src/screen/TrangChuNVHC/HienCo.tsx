@@ -5,8 +5,10 @@ import {
   TouchableOpacity,
   View,
   Image,
+  Pressable,
 } from 'react-native';
 import React from 'react';
+import { RootStackTrangChuNVHCEnum } from '../../Stack/RootStackTrangChuNVHC';
 
 interface HienCo {
   id: number;
@@ -19,40 +21,44 @@ interface HienCo {
   gio: string;
   ngay: string;
 }
-const renderItem = ({item}: any) => {
-  const {id, title, time, name, img, toa, phong, gio, ngay} = item;
-  return (
-    <View style={styles.containerPD}>
-      <View style={styles.title}>
-        <Text style={{fontSize: 17, fontWeight: '700', color:'black'}}>{title}</Text>
-        <Text style={{fontSize: 17, fontWeight: '500', color:'red', marginRight: 20}}>{time}</Text>
-      </View>
-      <View style={styles.content}>
-        <View style={styles.left}>
-          <Image source={img} style={{width: 50, height: 50}} />
+
+const HienCo = (props: any) => {
+  const { navigation } = props?.route;
+
+
+  const renderItem = ({ item }: any) => {
+    const { id, title, time, name, img, toa, phong, gio, ngay } = item;
+    return (
+      <Pressable onPress={() => navigation.navigate(RootStackTrangChuNVHCEnum.CTYeuCau, { item: item })} style={styles.containerPD}>
+        <View style={styles.title}>
+          <Text style={{ fontSize: 17, fontWeight: '700', color: 'black' }}>{title}</Text>
+          <Text style={{ fontSize: 17, fontWeight: '500', color: 'red', marginRight: 20 }}>{time}</Text>
         </View>
-        <View style={styles.right}>
-          <Text style={{fontSize: 16, fontWeight: '500', color:'black'}}>{name}</Text>
-          <View style={styles.bottom}>
-            <Text>{toa}</Text>
-            <Text>{phong}</Text>
-            <Text>{gio}</Text>
-            <Text>{ngay}</Text>
+        <View style={styles.content}>
+          <View style={styles.left}>
+            <Image source={img} style={{ width: 50, height: 50 }} />
+          </View>
+          <View style={styles.right}>
+            <Text style={{ fontSize: 16, fontWeight: '500', color: 'black' }}>{name}</Text>
+            <View style={styles.bottom}>
+              <Text>{toa}</Text>
+              <Text>{phong}</Text>
+              <Text>{gio}</Text>
+              <Text>{ngay}</Text>
+            </View>
           </View>
         </View>
-      </View>
-    </View>
-  );
-};
-const HienCo = () => {
+      </Pressable>
+    );
+  };
   return (
     <View style={styles.container}>
       <FlatList
-        style={{marginTop: 10}}
+        style={{ marginTop: 10 }}
         data={data}
         renderItem={renderItem}
         keyExtractor={item => item.id.toString()}
-        
+
       />
     </View>
   );
@@ -102,7 +108,7 @@ const styles = StyleSheet.create({
 const data: HienCo[] = [
   {
     id: 1,
-    title: 'Sự cố máy chiếu hỏng',
+    title: 'Sự cố máy chiếu hư',
     time: '11:50',
     name: 'Lê Văn Hiếu',
     img: require('../../assets/Profile.png'),
