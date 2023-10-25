@@ -30,14 +30,13 @@ import CTYeuCau from './src/screen/TrangChu/CTYeuCau';
 function App(): JSX.Element {
   const [isLogin, setIsLogin] = useState<boolean>(true);
   return (  
-    <CTYeuCau/>
-    /*<Provider theme={{ version: 2 }}>
+    <Provider theme={{ version: 2 }}>
       <StatusBar barStyle="light-content" backgroundColor={BG_COLOR} />
       {isLogin ?
         <BottomTab />
         : <DangNhap />
       }
-    </Provider>*/
+    </Provider>
   );
 }
 
