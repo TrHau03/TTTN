@@ -29,7 +29,7 @@ import { BG_COLOR } from './src/utilities';
 
 
 function App(): JSX.Element {
-  const [isLogin, setIsLogin] = useState<boolean>(false);
+  const [isLogin, setIsLogin] = useState<boolean>(true);
   return (
     <Provider theme={{ version: 2 }}>
       <StatusBar barStyle="light-content" backgroundColor={BG_COLOR} />

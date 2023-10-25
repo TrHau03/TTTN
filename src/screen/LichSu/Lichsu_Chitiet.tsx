@@ -1,5 +1,5 @@
-import { Image, Pressable, StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import { Image, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import React, { useState } from 'react'
 import COLOR, { HEIGHT, PADDING_HORIZONTAL, PADDING_TOP, WIDTH } from '../../utilities'
 import Icon from 'react-native-vector-icons/Ionicons'
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -17,9 +17,39 @@ interface LichSu {
         sdt: string
     }
 }
+
+const renderLabel = (e: any) => {
+    console.log(e);
+    const time = null;
+    return (
+        <View style={{ flexDirection: 'row', alignItems: 'center', marginLeft: 10, columnGap: 10 }}>
+            {e.position == 0 ?
+                <Image style={{ width: 50, height: 50 }} source={require('../../assets/Step1.png')} /> :
+                e.position == 1 ?
+                    <Image style={{ width: 50, height: 50 }} source={require('../../assets/Step2.png')} /> :
+                    <Image style={{ width: 50, height: 50 }} source={require('../../assets/Step3.png')} />
+            }
+            <View style={{ flexDirection: 'column' }}>
+                <Text style={{
+                    color: '#593E67',
+                    fontSize: 18,
+                    fontFamily: 'Helvetica Neue',
+                    fontWeight: '700',
+                }}>{e.label}</Text>
+                <Text style={{
+                    color: '#DE741C',
+                    fontSize: 16,
+                    fontFamily: 'Poppins',
+                    fontWeight: '400',
+                }}>{time ? '10h30' : '--:--'}</Text>
+            </View>
+        </View>
+    )
+}
 const Lichsu_Chitiet = ({ route, navigation }: Props) => {
     const { item } = route?.params as LichSu;
-    console.log(item);
+
+    const [currentPosition, setcurrentPosition] = useState<number>(3);
 
     return (
         <View style={{ width: WIDTH, height: HEIGHT, paddingHorizontal: PADDING_HORIZONTAL, paddingTop: PADDING_TOP }}>
@@ -41,15 +71,33 @@ const Lichsu_Chitiet = ({ route, navigation }: Props) => {
                 </View>
             </View>
 
-            <View style={{ width: '100%', height: 200, backgroundColor: 'red' }}>
+            <View style={{ width: '100%', height: 300, marginTop: HEIGHT / 15 }}>
+                <Text style={{
+                    color: '#593E67',
+                    fontSize: 18,
+                    fontFamily: 'Poppins',
+                    fontWeight: '700',
+                }}>
+                    Trạng thái yêu cầu
+                </Text>
                 <StepIndicator
                     direction={'vertical'}
                     stepCount={3}
-                    currentPosition={1}
-                    labels={['a', 'b', 'c']}
-                    renderStepIndicator={()=><Text></Text>}
+                    customStyles={{ labelAlign: 'flex-start', separatorStrokeWidth: 1, stepIndicatorSize: 20, currentStepIndicatorSize: 20, currentStepStrokeWidth: 0, stepIndicatorCurrentColor: COLOR.orange, stepIndicatorFinishedColor: COLOR.orange, stepIndicatorUnFinishedColor: '#ffcd71', separatorUnFinishedColor: '#ffcd71', separatorFinishedColor: COLOR.orange }}
+                    labels={['Yêu cầu', 'Yêu cầu đã được tiếp nhận', 'Yêu cầu đã được hoàn thành']}
+                    currentPosition={currentPosition - 1}
+                    renderLabel={renderLabel}
+                    renderStepIndicator={(e) => e.stepStatus === 'finished' || e.stepStatus === 'current' ? <Icon name='checkmark-sharp' size={16} /> : <></>}
                 />
             </View>
+            <TouchableOpacity style={{ width: '100%', backgroundColor: currentPosition >= 3 ? COLOR.orange : COLOR.white, position: 'absolute', bottom: HEIGHT * 0.15, alignSelf: 'center', justifyContent: 'center', alignItems: 'center', paddingVertical: 10, borderWidth: 1, borderColor: COLOR.orange, borderRadius: 10 }}>
+                <Text style={{
+                    color: currentPosition >= 3 ? COLOR.white : COLOR.orange,
+                    fontSize: 16,
+                    fontFamily: 'Poppins',
+                    fontWeight: '700',
+                }}>{currentPosition >= 3 ? 'Nhận xét' : 'Phản hồi'}</Text>
+            </TouchableOpacity>
         </View>
     )
 }
