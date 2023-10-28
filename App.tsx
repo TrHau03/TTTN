@@ -5,7 +5,7 @@
  * @format
  */
 
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import type { PropsWithChildren } from 'react';
 import {
   Alert,
@@ -28,16 +28,24 @@ import DangNhap from './src/screen/DangNhap/Dangnhap';
 import { BG_COLOR } from './src/utilities';
 import DangTiepNhan from './src/screen/TrangChuNVHC/DangTiepNhan';
 import CTYeuCau from './src/screen/TrangChuNVHC/CTYeuCau';
+import { UserContext, UserProvider } from './src/provider/Provider';
+
+const Navigation = () => {
+  const { isLoggedIn } = useContext(UserContext);
+  return !isLoggedIn ? <DangNhap /> :
+    <BottomTab />
+
+}
 function App(): JSX.Element {
-  const [isLogin, setIsLogin] = useState<boolean>(true);
-  const [role, setRole] = useState<string>('ntn');
+
   return (
-    <Provider theme={{ version: 2 }}>
-      <StatusBar barStyle="light-content" backgroundColor={BG_COLOR} />
-      {!isLogin ? <DangNhap /> :
-        <BottomTab />
-      }
-    </Provider>
+    <UserProvider>
+      <Provider theme={{ version: 2 }}>
+        <StatusBar barStyle="light-content" backgroundColor={BG_COLOR} />
+        <Navigation />
+      </Provider>
+    </UserProvider>
+
   );
 }
 

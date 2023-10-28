@@ -9,7 +9,7 @@ import {
   Pressable,
   PermissionsAndroid,
 } from 'react-native';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from 'react-native-paper';
 
 import COLOR, {
@@ -24,7 +24,8 @@ import { SelectList } from 'react-native-dropdown-select-list';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { NativeStackHeaderProps } from '@react-navigation/native-stack';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
-
+import { utils } from '@react-native-firebase/app';
+import storage from '@react-native-firebase/storage';
 interface Report {
   id: number;
   name: string;
@@ -41,21 +42,37 @@ const Report = (props: any) => {
 
   const [description, setDescription] = useState('');
 
-  //Camera
-  //const [img, setImg] = useState('');
+
+
+  const [img, setImg] = useState('');
+
+  // useEffect(() => {
+  //   const upload = async () => {
+  //     if (img != '') {
+  //       const pathToFile = img;
+  //       // uploads file
+  //     const check =   await reference.putFile(pathToFile);
+  //     console.log("hehe",pathToFile);
+  //     }
+  //     upload
+  //   }
+  // }, [img])
+  console.log(img);
   const requestCameraPermission = async () => {
     try {
       const granted = await PermissionsAndroid.request(
         PermissionsAndroid.PERMISSIONS.CAMERA,
       );
       if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        console.log('Camera Ok');
         const result: any = await launchCamera({
           mediaType: 'photo',
           cameraType: 'front',
         });
-        console.log(result.assets[0].uri);
+        const reference = storage().ref('a.jpg');
         setImg(result.assets[0].uri);
+        
+       await reference.putFile(result.assets[0].uri);
+
       } else {
         console.log('Từ chối');
       }
@@ -65,7 +82,7 @@ const Report = (props: any) => {
   };
 
   //Camera
-  const [img, setImg] = useState('');
+
   const requestCameraPermissionPhoto = async () => {
     try {
       const granted = await PermissionsAndroid.request(
@@ -85,95 +102,95 @@ const Report = (props: any) => {
     }
   };
   const data = [
-    { key: '1', value: 'Mobiles', disabled: true },
-    { key: '2', value: 'Androids' },
-    { key: '3', value: 'Cameras' },
-    { key: '4', value: 'Computers', disabled: true },
-    { key: '5', value: 'Iphones' },
+    { key: '1', value: 'Cơ sở vật chất' },
+    { key: '2', value: 'Thiết bị mạng' },
+    { key: '3', value: 'Vệ sinh phòng học' },
+    { key: '4', value: 'Góp ý phòng học' },
+    { key: '5', value: 'Sự cố khác' },
   ];
   return (
-      <ScrollView
-        style={{
-          backgroundColor: COLOR.white,
-          width: WIDTH,
-          height: HEIGHT,
-          paddingHorizontal: PADDING_HORIZONTAL,
-          paddingTop: PADDING_TOP,
-        }}>
-        {/* <Pressable onPress={() => navigation.goBack()}>
+    <ScrollView
+      style={{
+        backgroundColor: COLOR.white,
+        width: WIDTH,
+        height: HEIGHT,
+        paddingHorizontal: PADDING_HORIZONTAL,
+        paddingTop: PADDING_TOP,
+      }}>
+      {/* <Pressable onPress={() => navigation.goBack()}>
                 <Icon name='chevron-back' size={26} />
             </Pressable> */}
-        <Text
-          style={{
-            color: 'red',
-            fontSize: 30,
-            textAlign: 'center',
-            marginTop: 10,
-            fontWeight: 'bold',
-          }}>
-          BÁO CÁO SỰ CỐ
-        </Text>
+      <Text
+        style={{
+          color: 'red',
+          fontSize: 30,
+          textAlign: 'center',
+          marginTop: 10,
+          fontWeight: 'bold',
+        }}>
+        BÁO CÁO SỰ CỐ
+      </Text>
 
-        <View style={styles.text}>
-          <TextInput placeholder="Phòng" />
-        </View>
+      <View style={styles.text}>
+        <TextInput placeholder="Phòng" />
+      </View>
 
-        <View style={styles.dropdown}>
-          <SelectList
-            setSelected={(val: any) => setSelected(val)}
-            data={data}
-            save="value"
-            placeholder="Sự cố đang gặp phải"
+      <View style={styles.dropdown}>
+        <SelectList
+          setSelected={(val: any) => setSelected(val)}
+          data={data}
+          save="value"
+          placeholder="Sự cố đang gặp phải"
+        />
+
+        <View style={styles.description}>
+          <TextInput
+            multiline
           />
-
-          <View style={styles.description}>
-            <TextInput
-              multiline
-               />
-          </View>
-          <View
-            style={{
-              alignItems: 'center',
-              flexDirection: 'row',
-              marginTop: 20,
-              justifyContent: 'space-between',
-              alignContent: 'center',
-            }}>
-            <View style={styles.image}>
-              <TouchableOpacity onPress={requestCameraPermission}>
-                <Image
-                  style={{ width: 30, height: 30 }}
-                  source={require('../../assets/camera.png')}
-                />
-              </TouchableOpacity>
-            </View>
-            <View style={styles.image}>
-              <TouchableOpacity onPress={requestCameraPermissionPhoto}>
-                <Image
-                  style={{ width: 25, height: 25 }}
-                  source={require('../../assets/image.png')}
-                />
-              </TouchableOpacity>
-            </View>
-          </View>
-
-          <View>
-            {img != '' ? (
+        </View>
+        <View
+          style={{
+            alignItems: 'center',
+            flexDirection: 'row',
+            marginTop: 20,
+            justifyContent: 'space-between',
+            alignContent: 'center',
+          }}>
+          <View style={styles.image}>
+            <TouchableOpacity onPress={requestCameraPermission}>
               <Image
-                source={{ uri: img }}
-                style={{ width: '40%', height: 100, marginTop: 20 }}
+                style={{ width: 30, height: 30 }}
+                source={require('../../assets/camera.png')}
               />
-            ) : (
-              ''
-            )}
+            </TouchableOpacity>
           </View>
-          <View>
-            <Button style={styles.button} textColor="white">
-              Gửi yêu cầu
-            </Button>
+          <View style={styles.image}>
+            <TouchableOpacity onPress={requestCameraPermissionPhoto}>
+              <Image
+                style={{ width: 25, height: 25 }}
+                source={require('../../assets/image.png')}
+              />
+            </TouchableOpacity>
           </View>
         </View>
-      </ScrollView>
+
+        <View>
+          {img != '' ? (
+            <Image
+              source={{ uri: img }}
+              style={{ width: '40%', height: 100, marginTop: 20 }}
+            />
+          ) : (
+            ''
+          )}
+        </View>
+        <View>
+          <Button style={styles.button} textColor="white">
+            Gửi yêu cầu
+          </Button>
+        </View>
+      </View>
+    </ScrollView>
   );
 };
 
@@ -209,7 +226,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
     borderColor: 'gray',
     borderWidth: 1,
-    height: HEIGHT *0.3
+    height: HEIGHT * 0.3
   },
   button: {
     backgroundColor: 'orange',

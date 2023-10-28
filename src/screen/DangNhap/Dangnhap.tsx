@@ -1,8 +1,10 @@
 import { Alert, Image, Modal, Pressable, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import COLOR, { BG_COLOR, BUTTON_COLOR, HEIGHT, WIDTH } from '../../utilities';
 import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
 import Realm from 'realm';
+import axios from 'axios';
+import { UserContext } from '../../provider/Provider';
 
 interface Item {
     id: number;
@@ -12,6 +14,7 @@ const DangNhap = () => {
     const [modalVisible, setModalVisible] = useState<boolean>(false);
     const [focus, setFocus] = useState<number>(0);
     const [choseSchool, setChoseSchool] = useState<string>('Lựa chọn cơ sở');
+    const { login } = useContext(UserContext);
 
     const Item = ({ item }: { item: Item }) => {
         return (
@@ -21,7 +24,7 @@ const DangNhap = () => {
         )
     }
     const app = new Realm.App({
-        id: "application-0-kbkng",
+        id: "application-0-hzgnr",
     });
     GoogleSignin.configure({
         webClientId: '866351015855-c5ndv8jah0pbh3btmt4rj8dvkdr2jtjs.apps.googleusercontent.com',
@@ -33,21 +36,26 @@ const DangNhap = () => {
             // Sign into Google
             await GoogleSignin.hasPlayServices();
             const { idToken }: any = await GoogleSignin.signIn();
-            // use Google ID token to sign into Realm
-            const credential = Realm.Credentials.google({ idToken });
-            const user = await app.logIn(credential);
-            console.log("signed in as Realm user", user.id);
-        } catch (error: any) {
-            // handle errors
-            if (error.code === statusCodes.SIGN_IN_CANCELLED) {
-                // user cancelled the login flow
-            } else if (error.code === statusCodes.IN_PROGRESS) {
-                // operation (e.g. sign in) is in progress already
-            } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
-                // play services not available or outdated
+            const userGoogle = await GoogleSignin.signIn();
+            if (userGoogle.user.email.includes('fpt.edu.vn')) {
+                console.log('check');
+                
+                // use Google ID token to sign into Realm
+                const credential = Realm.Credentials.google({ idToken });
+                const user = await app.logIn(credential);
+                console.log("signed in as Realm user", userGoogle);
+                if (user) {
+                    login(userGoogle.user.name, userGoogle.user.email);
+                }
             } else {
-                // some other error happened
+            await GoogleSignin.revokeAccess();
+                console.error("Please, use email FPT");
             }
+
+        } catch (error: any) {
+            // some other error happened
+            await GoogleSignin.revokeAccess();
+            console.error("Please, use email FPT", error);
         }
     }
     return (

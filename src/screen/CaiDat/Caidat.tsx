@@ -1,11 +1,14 @@
-import { Image, StyleSheet, Text, View } from 'react-native'
-import React, { useState } from 'react'
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native'
+import React, { useContext, useState } from 'react'
 import COLOR, { BG_COLOR, HEIGHT, PADDING_HORIZONTAL, PADDING_TOP, WIDTH } from '../../utilities'
 import Icon from 'react-native-vector-icons/Ionicons'
 import { Switch } from 'react-native-paper'
+import { UserContext } from '../../provider/Provider'
 
 const CaiDat = () => {
     const [isSwitchOn, setIsSwitchOn] = useState<boolean>(false);
+
+    const { logout } = useContext(UserContext);
     return (
         <View style={{ backgroundColor: BG_COLOR, width: WIDTH, height: HEIGHT, paddingHorizontal: PADDING_HORIZONTAL, paddingTop: PADDING_TOP }}>
             <Icon name='chevron-back' size={26} color={COLOR.white} />
@@ -27,10 +30,10 @@ const CaiDat = () => {
                     <Text style={styles.textItem}>Thông báo</Text>
                     <Switch style={{ position: 'absolute', right: 20 }} value={isSwitchOn} onValueChange={() => setIsSwitchOn(!isSwitchOn)} trackColor={{ true: COLOR.orange, false: COLOR.gray }} thumbColor={isSwitchOn ? COLOR.orange : COLOR.gray} />
                 </View>
-                <View style={styles.item}>
+                <Pressable onPress={logout} style={styles.item}>
                     <Icon name='log-out-outline' size={30} style={styles.icon} />
                     <Text style={styles.textItem}>Đăng xuất</Text>
-                </View>
+                </Pressable>
             </View>
 
         </View >
