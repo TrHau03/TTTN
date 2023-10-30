@@ -1,18 +1,18 @@
-import TrangChuNVHC from "../screen/TrangChuNVHC/TrangChuNVHC";
+import CaiDatNVHC from "../screen/CaiDatNVHC/CaiDatNVHC";
 
 
 export enum RootStackCaiDatNVHCEnum {
-    TrangChuNVHC = 'TrangChuNVHC',
+    CaiDatNVHC = 'CaiDatNVHC'
 }
 
 export type RootStackParamListCaiDatNVHC = {
-    LiTrangChuNVHCenHe: undefined,
+    CaiDatNVHC: undefined,
 }
 
 
 export const RootStackCaiDatNVHC = () => {
     const Screen: any = [
-        { id: 1, name: RootStackCaiDatNVHCEnum.TrangChuNVHC, component: TrangChuNVHC, options: {} },
+        { id: 1, name: RootStackCaiDatNVHCEnum.CaiDatNVHC, component: CaiDatNVHC, options: {} },
     ]
     return Screen;
 }

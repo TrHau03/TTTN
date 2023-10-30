@@ -1,168 +1,129 @@
 import {
-    FlatList,
-    StyleSheet,
-    Text,
-    View,
-    Image,
-  } from 'react-native';
-  import React from 'react';
-  interface DangTiepNhan {
-    id: number;
-    title: string;
-    time: string,
-    name: string;
-    img: any;
-    toa: string;
-    phong: string;
-    gio: string;
-    ngay: string;
+  FlatList,
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  Pressable,
+} from 'react-native';
+import React, { useContext, useEffect, useState } from 'react';
+import { UserContext } from '../../provider/Provider';
+import { RootStackTrangChuNVHCEnum } from '../../Stack/RootStackTrangChuNVHC';
+import { useIsFocused } from '@react-navigation/native';
+interface DangTiepNhan {
+  room: string;
+  reportType: string,
+  image1: string;
+  image2: string;
+  description: string;
+  status1: {
+    status: boolean;
+    time: string;
+    date: string;
+  };
+  annunciator: {
+    userName: string;
+  };
+  reportRecipient: {
+    userName: string;
+  };
+  status2: any;
+  status3: any;
+  evaluate: string;
+  start: 5
+}
+const RenderItem = ({ data, navigation, setRender }: any) => {
+  const { item } = data;
+  return (
+    <Pressable onPress={() => navigation.navigate(RootStackTrangChuNVHCEnum.CTYeuCau, { item: item, setRender: setRender })} style={styles.containerPD}>
+      <View style={styles.title}>
+        <Text style={{ fontSize: 17, fontWeight: '700', color: 'black' }}>{item.reportType}</Text>
+      </View>
+      <View style={styles.content}>
+        <View style={styles.left}>
+          {/* <Image source={img} style={{ width: 50, height: 50 }} /> */}
+        </View>
+        <View style={styles.right}>
+          <Text style={{ fontSize: 16, fontWeight: '500', color: 'black' }}>{item.annunciator.userName}</Text>
+          <View style={styles.bottom}>
+            <Text>{item.room}</Text>
+            <Text>{item.status1.time}</Text>
+            <Text>{item.status1.date}</Text>
+          </View>
+        </View>
+      </View>
+    </Pressable>
+  );
+};
+const DangTiepNhan = (props: any) => {
+  const isFocused = useIsFocused();
+  const { navigation } = props?.route;
+
+  const { getAllReport } = useContext(UserContext);
+  const [data, setData] = useState<any>([])
+  const getData = async () => {
+    const response = await getAllReport();
+    setData(response.filter((item: any) => {
+      return item.status3 == null && item.status2 != null;
+    }));
   }
-  const renderItem = ({item}: any) => {
-    const {id, title, time, name, img, toa, phong, gio, ngay} = item;
-    return (
-      <View style={styles.containerPD}>
-        <View style={styles.title}>
-          <Text style={{fontSize: 17, fontWeight: '700', color:'black'}}>{title}</Text>
-          <Text style={{fontSize: 17, fontWeight: '500', color:'red', marginRight: 20}}>{time}</Text>
-        </View>
-        <View style={styles.content}>
-          <View style={styles.left}>
-            <Image source={img} style={{width: 50, height: 50}} />
-          </View>
-          <View style={styles.right}>
-            <Text style={{fontSize: 16, fontWeight: '500', color:'black'}}>{name}</Text>
-            <View style={styles.bottom}>
-              <Text>{toa}</Text>
-              <Text>{phong}</Text>
-              <Text>{gio}</Text>
-              <Text>{ngay}</Text>
-            </View>
-          </View>
-        </View>
-      </View>
-    );
-  };
-  const DangTiepNhan = () => {
-    return (
-      <View style={styles.container}>
-        <FlatList
-          style={{marginTop: 10}}
-          data={data}
-          renderItem={renderItem}
-          keyExtractor={item => item.id.toString()}
-          
-        />
-      </View>
-    );
-  };
-  
-  export default DangTiepNhan;
-  
-  const styles = StyleSheet.create({
-    bottom: {
-      marginTop: 5,
-      flexDirection: 'row',
-      justifyContent: 'space-between'
-    },
-    right: {
-      width: '80%',
-    },
-    left: {
-      width: '20%',
-    },
-    content: {
-      justifyContent: 'center',
-      alignItems: 'center',
-      flexDirection: 'row',
-      width: '100%',
-      padding: 10,
-    },
-    title: {
-      width: '100%',
-      flexDirection: 'row',
-      justifyContent: 'space-between'
-    },
-    containerPD: {
-      width: '100%',
-      height: 'auto',
-      marginTop: 10,
-      padding: 10,
-      borderWidth: 0.5,
-      borderRadius: 10
-    },
-    container: {
-      padding: 10,
-      width: '100%',
-      height: '100%',
-    },
-  });
-  
-  const data: DangTiepNhan[] = [
-    {
-      id: 1,
-      title: 'Sự cố máy chiếu hỏng',
-      time: '11:50',
-      name: 'Lê Văn Hiếu',
-      img: require('../../assets/Profile.png'),
-      toa: 'Tòa T',
-      phong: '1103',
-      gio: '9h15',
-      ngay: '17/02/2023',
-    },
-    {
-      id: 2,
-      title: 'Sự cố máy chiếu hỏng',
-      time: '11:50',
-      name: 'Lê Văn Hiếu',
-      img: require('../../assets/Profile.png'),
-      toa: 'Tòa T',
-      phong: '1103',
-      gio: '9h15',
-      ngay: '17/02/2023',
-    },
-    {
-      id: 3,
-      title: 'Sự cố máy chiếu hỏng',
-      time: '11:50',
-      name: 'Lê Văn Hiếu',
-      img: require('../../assets/Profile.png'),
-      toa: 'Tòa T',
-      phong: '1103',
-      gio: '9h15',
-      ngay: '17/02/2023',
-    },
-    {
-      id: 4,
-      title: 'Sự cố máy chiếu hỏng',
-      time: '11:50',
-      name: 'Lê Văn Hiếu',
-      img: require('../../assets/Profile.png'),
-      toa: 'Tòa T',
-      phong: '1103',
-      gio: '9h15',
-      ngay: '17/02/2023',
-    },
-    {
-      id: 5,
-      title: 'Sự cố máy chiếu hỏng',
-      time: '11:50',
-      name: 'Lê Văn Hiếu',
-      img: require('../../assets/Profile.png'),
-      toa: 'Tòa T',
-      phong: '1103',
-      gio: '9h15',
-      ngay: '17/02/2023',
-    },
-    {
-      id: 6,
-      title: 'Sự cố máy chiếu hỏng',
-      time: '11:50',
-      name: 'Lê Văn Hiếu',
-      img: require('../../assets/Profile.png'),
-      toa: 'Tòa T',
-      phong: '1103',
-      gio: '9h15',
-      ngay: '17/02/2023',
-    },
-  ];
-  
+  useEffect(() => {
+    if (isFocused) {
+      getData();
+    }
+  }, [isFocused])
+  return (
+    <View style={styles.container}>
+      <FlatList
+        style={{ marginTop: 10 }}
+        data={data}
+        renderItem={(item: any) => <RenderItem data={item} navigation={navigation} />}
+        keyExtractor={item => item._id.toString() as never}
+
+      />
+    </View>
+  );
+};
+
+export default DangTiepNhan;
+
+const styles = StyleSheet.create({
+  bottom: {
+    marginTop: 5,
+    flexDirection: 'row',
+    justifyContent: 'space-between'
+  },
+  right: {
+    width: '80%',
+  },
+  left: {
+    width: '20%',
+  },
+  content: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'row',
+    width: '100%',
+    padding: 10,
+  },
+  title: {
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-between'
+  },
+  containerPD: {
+    width: '100%',
+    height: 'auto',
+    marginTop: 10,
+    padding: 10,
+    borderWidth: 0.5,
+    borderRadius: 10
+  },
+  container: {
+    padding: 10,
+    width: '100%',
+    height: '100%',
+  },
+});
+
+

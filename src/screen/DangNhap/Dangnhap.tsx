@@ -38,12 +38,10 @@ const DangNhap = () => {
             const { idToken }: any = await GoogleSignin.signIn();
             const userGoogle = await GoogleSignin.signIn();
             if (userGoogle.user.email.includes('fpt.edu.vn')) {
-                console.log('check');
                 
                 // use Google ID token to sign into Realm
                 const credential = Realm.Credentials.google({ idToken });
                 const user = await app.logIn(credential);
-                console.log("signed in as Realm user", userGoogle);
                 if (user) {
                     login(userGoogle.user.name, userGoogle.user.email);
                 }

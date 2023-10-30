@@ -10,7 +10,7 @@ export enum RootStackTrangChuNVHCEnum {
 }
 
 export type RootStackParamListLienHe = {
-    LiTrangChuNVHCenHe: undefined,
+    TTrangChuNVHCra: undefined,
     DSSuCo: undefined,
     CTYeuCau: undefined,
 }

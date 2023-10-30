@@ -9,9 +9,9 @@ import {
   Pressable,
   PermissionsAndroid,
 } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Button } from 'react-native-paper';
-
+import uuid from 'react-native-uuid';
 import COLOR, {
   BG_COLOR,
   HEIGHT,
@@ -26,6 +26,7 @@ import { NativeStackHeaderProps } from '@react-navigation/native-stack';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import { utils } from '@react-native-firebase/app';
 import storage from '@react-native-firebase/storage';
+import { UserContext } from '../../provider/Provider';
 interface Report {
   id: number;
   name: string;
@@ -36,28 +37,36 @@ interface Report {
 
 const Report = (props: any) => {
   const { navigation }: NativeStackHeaderProps = props;
-
+  const { addReport } = useContext(UserContext);
   const [inputText, setInputText] = useState('');
   const [selected, setSelected] = React.useState('');
 
   const [description, setDescription] = useState('');
 
 
-
   const [img, setImg] = useState('');
 
-  // useEffect(() => {
-  //   const upload = async () => {
-  //     if (img != '') {
-  //       const pathToFile = img;
-  //       // uploads file
-  //     const check =   await reference.putFile(pathToFile);
-  //     console.log("hehe",pathToFile);
-  //     }
-  //     upload
-  //   }
-  // }, [img])
-  console.log(img);
+
+  const handleReport = async () => {
+    try {
+      const reference = storage().ref(`${uuid.v4()}.jpg`);
+      console.log(img);
+      await reference.putFile(img);
+      const urlImage = await reference.getDownloadURL();
+      console.log(urlImage);
+      const response = await addReport({ inputText, selected, urlImage, description });
+      if(response){
+        navigation.goBack();
+      }else{
+        console.warn("Request Failed");
+        
+      }
+    } catch (error) {
+      console.log(error);
+
+    }
+  }
+
   const requestCameraPermission = async () => {
     try {
       const granted = await PermissionsAndroid.request(
@@ -68,16 +77,12 @@ const Report = (props: any) => {
           mediaType: 'photo',
           cameraType: 'front',
         });
-        const reference = storage().ref('a.jpg');
-        setImg(result.assets[0].uri);
-        
-       await reference.putFile(result.assets[0].uri);
-
+        setImg(result ? result.assets[0].uri : '');
       } else {
         console.log('Từ chối');
       }
     } catch (error) {
-      console.warn(error);
+      console.log(error);
     }
   };
 
@@ -93,12 +98,12 @@ const Report = (props: any) => {
         //Mở thư viện ảnh
         const result: any = await launchImageLibrary({ mediaType: 'photo' });
         console.log(result.assets[0].uri);
-        setImg(result.assets[0].uri);
+        setImg(result ? result.assets[0].uri : '');
       } else {
         console.log('Từ chối');
       }
     } catch (error) {
-      console.warn(error);
+      console.log(error);
     }
   };
   const data = [
@@ -132,7 +137,7 @@ const Report = (props: any) => {
       </Text>
 
       <View style={styles.text}>
-        <TextInput placeholder="Phòng" />
+        <TextInput placeholder="Phòng" value={inputText} onChangeText={setInputText} />
       </View>
 
       <View style={styles.dropdown}>
@@ -146,6 +151,8 @@ const Report = (props: any) => {
         <View style={styles.description}>
           <TextInput
             multiline
+            value={description}
+            onChangeText={setDescription}
           />
         </View>
         <View
@@ -185,7 +192,7 @@ const Report = (props: any) => {
           )}
         </View>
         <View>
-          <Button style={styles.button} textColor="white">
+          <Button onPress={handleReport} style={styles.button} textColor="white">
             Gửi yêu cầu
           </Button>
         </View>

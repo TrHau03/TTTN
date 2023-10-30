@@ -6,22 +6,35 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { TouchableOpacity } from 'react-native';
 import SelectDropdown from 'react-native-select-dropdown';
+import { UserContext } from '../../provider/Provider';
+import { NativeStackHeaderProps } from '@react-navigation/native-stack';
+import { RootStackTrangChuNVHCEnum } from '../../Stack/RootStackTrangChuNVHC';
 
-const CTYeuCau = (props: any) => {
+const CTYeuCau = (props: NativeStackHeaderProps) => {
   console.log(props.route.params);
-  const {item} = props?.route?.params;
-  const [click, setClick] = useState<boolean>(false);
+  const { item }: any = props?.route?.params;
+  const { navigation } = props;
+  const [status, setStatus] = useState<boolean>(item.status2 != null ? true : false);
+  const { updateStatusReport, doneStatusReport, getAllReport } = useContext(UserContext);
   const loi = ['Lỗi từ phía giảng viên', 'Lỗi từ phía hệ thống', 'Khác'];
   const thoigian = ['15 phút', '30 phút', '1 tiếng', '2 tiếng', '1 ngày',];
-  console.log(click);
 
+
+  const handleTiepNhan = () => {
+    setStatus(true);
+    updateStatusReport(item._id);
+  }
+  const handleDone = async () => {
+    doneStatusReport(item._id);
+    navigation.goBack();
+  }
   return (
     <View style={styles.container}>
       <Text style={{ fontSize: 16, color: 'black', fontWeight: '400' }}>
-        Tên người yêu cầu:{' '}
+        Tên người yêu cầu:
       </Text>
       <View style={styles.detail}>
         <View style={styles.img}>
@@ -32,7 +45,7 @@ const CTYeuCau = (props: any) => {
         </View>
         <View style={styles.text}>
           <Text style={{ fontSize: 18, color: 'black', fontWeight: '500' }}>
-            {item.name}
+            {item.annunciator.userName}
           </Text>
           <Text style={{ fontSize: 16, color: 'black', fontWeight: '400' }}>
             01234567
@@ -51,7 +64,7 @@ const CTYeuCau = (props: any) => {
             Thời Gian:{' '}
           </Text>
           <Text style={{ fontWeight: '500', color: 'black', fontSize: 18 }}>
-            9h20
+            {item.status1.time}
           </Text>
         </View>
         <View style={{ flexDirection: 'row', width: '70%', marginTop: 20 }}>
@@ -59,7 +72,7 @@ const CTYeuCau = (props: any) => {
             Phòng:{' '}
           </Text>
           <Text style={{ fontWeight: '500', color: 'black', fontSize: 18 }}>
-            T1010
+            {item.room}
           </Text>
         </View>
         <View style={{ flexDirection: 'row', width: '70%', marginTop: 20 }}>
@@ -67,12 +80,11 @@ const CTYeuCau = (props: any) => {
             Mô tả sự cố:{' '}
           </Text>
           <Text style={{ fontWeight: '500', color: 'black', fontSize: 18 }}>
-            Bóng đèn cháy, lỗi Ti vi, lỗi điều hòa hòa hòa, Bóng đèn cháy, lỗi
-            Ti vi, lỗi điều hòa hòa hòa
+            {item.description}
           </Text>
         </View>
       </View>
-      {(!click) ? <></> :
+      {(!status) ? <></> :
         <View>
           <View
             style={{
@@ -85,11 +97,6 @@ const CTYeuCau = (props: any) => {
               <SelectDropdown
                 data={loi}
                 defaultButtonText='Lỗi sự cố từ'
-                //defaultValueByIndex={0}
-                // defaultValue={{
-                //   title: 'England',
-                //   image: require('./Images/England.jpg'),
-                //}}
                 onSelect={(selectedItem, index) => {
                   console.log(selectedItem, index);
                 }}
@@ -129,16 +136,16 @@ const CTYeuCau = (props: any) => {
           </View>
         </View>
       }
-      {(!click)
+      {(!status)
         ? <View>
-          <TouchableOpacity style={styles.btn} onPress={() => setClick(true)}>
+          <TouchableOpacity style={styles.btn} onPress={handleTiepNhan}>
             <Text style={{ color: 'white', fontWeight: '700', fontSize: 18 }}>
               Tiếp Nhận
             </Text>
           </TouchableOpacity>
         </View>
         : <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-between' }}>
-          <TouchableOpacity style={styles.btnHoanThanh}>
+          <TouchableOpacity onPress={handleDone} style={styles.btnHoanThanh}>
             <Text style={{ color: 'white', fontWeight: '700', fontSize: 18 }}>Hoàn thành</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.btnChuaXuLy}>

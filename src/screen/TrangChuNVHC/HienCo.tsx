@@ -7,58 +7,62 @@ import {
   Image,
   Pressable,
 } from 'react-native';
-import React from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { RootStackTrangChuNVHCEnum } from '../../Stack/RootStackTrangChuNVHC';
-
-interface HienCo {
-  id: number;
-  title: string;
-  time: string,
-  name: string;
-  img: any;
-  toa: string;
-  phong: string;
-  gio: string;
-  ngay: string;
-}
-
-const HienCo = (props: any) => {
-  const { navigation } = props?.route;
+import { UserContext } from '../../provider/Provider';
+import { useIsFocused } from '@react-navigation/native';
 
 
-  const renderItem = ({ item }: any) => {
-    const { id, title, time, name, img, toa, phong, gio, ngay } = item;
-    return (
-      <Pressable onPress={() => navigation.navigate(RootStackTrangChuNVHCEnum.CTYeuCau, { item: item })} style={styles.containerPD}>
-        <View style={styles.title}>
-          <Text style={{ fontSize: 17, fontWeight: '700', color: 'black' }}>{title}</Text>
-          <Text style={{ fontSize: 17, fontWeight: '500', color: 'red', marginRight: 20 }}>{time}</Text>
-        </View>
-        <View style={styles.content}>
-          <View style={styles.left}>
-            <Image source={img} style={{ width: 50, height: 50 }} />
-          </View>
-          <View style={styles.right}>
-            <Text style={{ fontSize: 16, fontWeight: '500', color: 'black' }}>{name}</Text>
-            <View style={styles.bottom}>
-              <Text>{toa}</Text>
-              <Text>{phong}</Text>
-              <Text>{gio}</Text>
-              <Text>{ngay}</Text>
-            </View>
-          </View>
-        </View>
-      </Pressable>
-    );
-  };
+
+const RenderItem = ({ data, navigation, getData }: any) => {
+  const { item } = data;
   return (
+    <Pressable onPress={() => navigation.navigate(RootStackTrangChuNVHCEnum.CTYeuCau, { item: item, getData: getData })} style={styles.containerPD}>
+      <View style={styles.title}>
+        <Text style={{ fontSize: 17, fontWeight: '700', color: 'black' }}>{item.reportType}</Text>
+      </View>
+      <View style={styles.content}>
+        <View style={styles.left}>
+          {/* <Image source={img} style={{ width: 50, height: 50 }} /> */}
+        </View>
+        <View style={styles.right}>
+          <Text style={{ fontSize: 16, fontWeight: '500', color: 'black' }}>{item.annunciator.userName}</Text>
+          <View style={styles.bottom}>
+            <Text>{item.room}</Text>
+            <Text>{item.status1.time}</Text>
+            <Text>{item.status1.date}</Text>
+          </View>
+        </View>
+      </View>
+    </Pressable>
+  );
+};
+const HienCo = (props: any) => {
+  const isFocused = useIsFocused();
+  const { navigation } = props?.route;
+  const { getAllReport } = useContext(UserContext);
+  const [data, setData] = useState<any>([])
+  const getData = async () => {
+    const response = await getAllReport();
+    setData(response.filter((item: any) => {
+      return item.status2 == null;
+    }));
+  }
+  useEffect(() => {
+    if (isFocused) {
+      getData();
+    }
+  }, [isFocused])
+
+
+  return (
+
     <View style={styles.container}>
       <FlatList
         style={{ marginTop: 10 }}
         data={data}
-        renderItem={renderItem}
-        keyExtractor={item => item.id.toString()}
-
+        renderItem={(item: any) => <RenderItem data={item} navigation={navigation} />}
+        keyExtractor={item => item._id.toString()}
       />
     </View>
   );
@@ -105,71 +109,4 @@ const styles = StyleSheet.create({
   },
 });
 
-const data: HienCo[] = [
-  {
-    id: 1,
-    title: 'Sự cố máy chiếu hư',
-    time: '11:50',
-    name: 'Lê Văn Hiếu',
-    img: require('../../assets/Profile.png'),
-    toa: 'Tòa T',
-    phong: '1103',
-    gio: '9h15',
-    ngay: '17/02/2023',
-  },
-  {
-    id: 2,
-    title: 'Sự cố máy chiếu hỏng',
-    time: '11:50',
-    name: 'Lê Văn Hiếu',
-    img: require('../../assets/Profile.png'),
-    toa: 'Tòa T',
-    phong: '1103',
-    gio: '9h15',
-    ngay: '17/02/2023',
-  },
-  {
-    id: 3,
-    title: 'Sự cố máy chiếu hỏng',
-    time: '11:50',
-    name: 'Lê Văn Hiếu',
-    img: require('../../assets/Profile.png'),
-    toa: 'Tòa T',
-    phong: '1103',
-    gio: '9h15',
-    ngay: '17/02/2023',
-  },
-  {
-    id: 4,
-    title: 'Sự cố máy chiếu hỏng',
-    time: '11:50',
-    name: 'Lê Văn Hiếu',
-    img: require('../../assets/Profile.png'),
-    toa: 'Tòa T',
-    phong: '1103',
-    gio: '9h15',
-    ngay: '17/02/2023',
-  },
-  {
-    id: 5,
-    title: 'Sự cố máy chiếu hỏng',
-    time: '11:50',
-    name: 'Lê Văn Hiếu',
-    img: require('../../assets/Profile.png'),
-    toa: 'Tòa T',
-    phong: '1103',
-    gio: '9h15',
-    ngay: '17/02/2023',
-  },
-  {
-    id: 6,
-    title: 'Sự cố máy chiếu hỏng',
-    time: '11:50',
-    name: 'Lê Văn Hiếu',
-    img: require('../../assets/Profile.png'),
-    toa: 'Tòa T',
-    phong: '1103',
-    gio: '9h15',
-    ngay: '17/02/2023',
-  },
-];
+
