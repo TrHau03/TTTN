@@ -34,6 +34,7 @@ interface Report {
   description: string;
 }
 const image: any = [];
+let imageURL: any = [];
 
 const renderItem = ({ item }: any) => {
   console.log(item);
@@ -57,37 +58,30 @@ const Report = (props: any) => {
 
   const [description, setDescription] = useState('');
 
-  const imageURL: any = []
 
-  console.log(image);
 
   const handleReport = async () => {
     try {
-      image.forEach(async (element: any) => {
-        const reference = storage().ref(`${uuid.v4()}.jpg`);
-        console.log(element.ing);
-        await reference.putFile(element.img);
-        const urlImage = await reference.getDownloadURL();
-        console.log(urlImage);
-        imageURL.push(urlImage);
-      });
-
-      const response = await addReport({ inputText, selected, imageURL, description });
-      if (response) {
-        navigation.goBack();
-      } else {
-        console.warn("Request Failed");
-
-      }
+      const uploadImages = async () => {
+        await Promise.all(image.map(async (element: any) => {
+          const reference = storage().ref(`${uuid.v4()}.jpg`);
+          await reference.putFile(element.img);
+          const url = await reference.getDownloadURL();
+          imageURL.push(url);
+        }));
+      };
+      await uploadImages();
+      await addReport({ inputText, selected, imageURL, description });
+      imageURL = [];
+      setAddImage(!addImage);
+      navigation.goBack();
     } catch (error) {
       console.log(error);
-
     }
   }
 
   const requestCameraPermission = async () => {
     try {
-      setAddImage(true);
       const granted = await PermissionsAndroid.request(
         PermissionsAndroid.PERMISSIONS.CAMERA,
       );
@@ -97,10 +91,8 @@ const Report = (props: any) => {
           cameraType: 'front',
         });
         const object = { id: image.length + 1, img: result.assets[0].uri };
-        console.log(object);
-
         image.push(object);
-        setAddImage(false);
+        setAddImage(!addImage);
       } else {
         console.log('Từ chối');
       }
@@ -113,7 +105,6 @@ const Report = (props: any) => {
 
   const requestCameraPermissionPhoto = async () => {
     try {
-      setAddImage(true);
       const granted = await PermissionsAndroid.request(
         PermissionsAndroid.PERMISSIONS.CAMERA,
       );
@@ -123,7 +114,7 @@ const Report = (props: any) => {
         const result: any = await launchImageLibrary({ mediaType: 'photo' });
         console.log(result.assets[0].uri);
         image.push(result ? { id: image.length + 1, img: result.assets[0].uri } : null);
-        setAddImage(false);
+        setAddImage(!addImage);
       } else {
         console.log('Từ chối');
       }
@@ -209,6 +200,7 @@ const Report = (props: any) => {
         <View>
           <FlatList
             numColumns={2}
+            scrollEnabled={false}
             columnWrapperStyle={{ columnGap: 5, justifyContent: 'center' }}
             data={image}
             keyExtractor={item => item.id}
@@ -263,6 +255,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'orange',
     marginTop: 20,
     borderRadius: 10,
+    marginBottom: 50
   },
   image: {
     backgroundColor: '#eaeaea',

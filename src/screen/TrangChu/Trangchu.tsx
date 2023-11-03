@@ -33,15 +33,16 @@ const RenderItem = (props: any) => {
 }
 
 const TrangChu = ({ navigation }: NativeStackHeaderProps) => {
-    const {userName} = useContext(UserContext);
-
+    const {userGoogle} = useContext(UserContext);
+    console.log(userGoogle);
+    
 
     return (
         <View style={{ backgroundColor: BG_COLOR, width: WIDTH, height: HEIGHT, paddingHorizontal: PADDING_HORIZONTAL, paddingTop: PADDING_TOP }}>
             <View style={{ justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}>
                 <View style={{ alignItems: 'center', flexDirection: 'column' }}>
                     <Image style={{ width: 50, height: 50, backgroundColor: COLOR.white, borderRadius: 50 }} source={require('../../assets/logo.png')} />
-                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: COLOR.white, marginTop: 10 }}>{userName}</Text>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: COLOR.white, marginTop: 10 }}>{userGoogle ? userGoogle.user.name: ""}</Text>
                 </View>
                 <Pressable onPress={() => navigation.navigate(RootStackTrangChuEnum.ThongBao)} style={{ position: 'absolute', right: 0 }}>
                     <Icon name='bell-outline' size={30} color={COLOR.white} />

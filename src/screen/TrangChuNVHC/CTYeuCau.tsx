@@ -18,17 +18,17 @@ const CTYeuCau = (props: NativeStackHeaderProps) => {
   const { item }: any = props?.route?.params;
   const { navigation } = props;
   const [status, setStatus] = useState<boolean>(item.status2 != null ? true : false);
-  const { updateStatusReport, doneStatusReport, getAllReport } = useContext(UserContext);
+  const { updateStatusReport, doneStatusReport } = useContext(UserContext);
   const loi = ['Lỗi từ phía giảng viên', 'Lỗi từ phía hệ thống', 'Khác'];
   const thoigian = ['15 phút', '30 phút', '1 tiếng', '2 tiếng', '1 ngày',];
 
 
-  const handleTiepNhan = () => {
+  const handleTiepNhan = async () => {
     setStatus(true);
-    updateStatusReport(item._id);
+    await updateStatusReport(item._id);
   }
   const handleDone = async () => {
-    doneStatusReport(item._id);
+    await doneStatusReport(item._id);
     navigation.goBack();
   }
   return (
