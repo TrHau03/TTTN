@@ -4,10 +4,11 @@ import {
   View,
   TextInput,
   ScrollView,
-  Image,
   TouchableOpacity,
   Pressable,
   PermissionsAndroid,
+  FlatList,
+  Image,
 } from 'react-native';
 import React, { useContext, useEffect, useState } from 'react';
 import { Button } from 'react-native-paper';
@@ -21,10 +22,8 @@ import COLOR, {
 } from '../../utilities';
 
 import { SelectList } from 'react-native-dropdown-select-list';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { NativeStackHeaderProps } from '@react-navigation/native-stack';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
-import { utils } from '@react-native-firebase/app';
 import storage from '@react-native-firebase/storage';
 import { UserContext } from '../../provider/Provider';
 interface Report {
@@ -34,6 +33,18 @@ interface Report {
   vector: any;
   description: string;
 }
+const image: any = [];
+
+const renderItem = ({ item }: any) => {
+  console.log(item);
+
+  return (
+    <View style={{ paddingVertical: 10 }}>
+      <Image style={{ height: 100, width: 100 }} source={{ uri: item.img }} />
+    </View>
+  )
+}
+
 
 const Report = (props: any) => {
   const { navigation }: NativeStackHeaderProps = props;
@@ -41,25 +52,32 @@ const Report = (props: any) => {
   const [inputText, setInputText] = useState('');
   const [selected, setSelected] = React.useState('');
 
+
+  const [addImage, setAddImage] = useState<boolean>(false);
+
   const [description, setDescription] = useState('');
 
+  const imageURL: any = []
 
-  const [img, setImg] = useState('');
-
+  console.log(image);
 
   const handleReport = async () => {
     try {
-      const reference = storage().ref(`${uuid.v4()}.jpg`);
-      console.log(img);
-      await reference.putFile(img);
-      const urlImage = await reference.getDownloadURL();
-      console.log(urlImage);
-      const response = await addReport({ inputText, selected, urlImage, description });
-      if(response){
+      image.forEach(async (element: any) => {
+        const reference = storage().ref(`${uuid.v4()}.jpg`);
+        console.log(element.ing);
+        await reference.putFile(element.img);
+        const urlImage = await reference.getDownloadURL();
+        console.log(urlImage);
+        imageURL.push(urlImage);
+      });
+
+      const response = await addReport({ inputText, selected, imageURL, description });
+      if (response) {
         navigation.goBack();
-      }else{
+      } else {
         console.warn("Request Failed");
-        
+
       }
     } catch (error) {
       console.log(error);
@@ -69,6 +87,7 @@ const Report = (props: any) => {
 
   const requestCameraPermission = async () => {
     try {
+      setAddImage(true);
       const granted = await PermissionsAndroid.request(
         PermissionsAndroid.PERMISSIONS.CAMERA,
       );
@@ -77,7 +96,11 @@ const Report = (props: any) => {
           mediaType: 'photo',
           cameraType: 'front',
         });
-        setImg(result ? result.assets[0].uri : '');
+        const object = { id: image.length + 1, img: result.assets[0].uri };
+        console.log(object);
+
+        image.push(object);
+        setAddImage(false);
       } else {
         console.log('Từ chối');
       }
@@ -90,6 +113,7 @@ const Report = (props: any) => {
 
   const requestCameraPermissionPhoto = async () => {
     try {
+      setAddImage(true);
       const granted = await PermissionsAndroid.request(
         PermissionsAndroid.PERMISSIONS.CAMERA,
       );
@@ -98,7 +122,8 @@ const Report = (props: any) => {
         //Mở thư viện ảnh
         const result: any = await launchImageLibrary({ mediaType: 'photo' });
         console.log(result.assets[0].uri);
-        setImg(result ? result.assets[0].uri : '');
+        image.push(result ? { id: image.length + 1, img: result.assets[0].uri } : null);
+        setAddImage(false);
       } else {
         console.log('Từ chối');
       }
@@ -182,14 +207,13 @@ const Report = (props: any) => {
         </View>
 
         <View>
-          {img != '' ? (
-            <Image
-              source={{ uri: img }}
-              style={{ width: '40%', height: 100, marginTop: 20 }}
-            />
-          ) : (
-            ''
-          )}
+          <FlatList
+            numColumns={2}
+            columnWrapperStyle={{ columnGap: 5, justifyContent: 'center' }}
+            data={image}
+            keyExtractor={item => item.id}
+            renderItem={renderItem}
+          />
         </View>
         <View>
           <Button onPress={handleReport} style={styles.button} textColor="white">

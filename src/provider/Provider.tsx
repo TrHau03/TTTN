@@ -9,7 +9,8 @@ export const UserProvider = (props: any) => {
 
     const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
     const [role, setRole] = useState<number>();
-    const [idReportRecipient, setIdReportRecipient] = useState<string>('')
+    const [idReportRecipient, setIdReportRecipient] = useState<string>('');
+    const [userName, setUserName] = useState<string>('');
     const login = (userName: any, email: any) => axios({
         method: 'post',
         url: 'https://tttn-api-86140b31a001.herokuapp.com/users/login',
@@ -24,6 +25,8 @@ export const UserProvider = (props: any) => {
             setIsLoggedIn(true);
             setRole(response.data.role);
             setIdReportRecipient(response.data.idUser);
+            console.log(response.data);
+            
             return response.data;
         });
     const logout = async () => {
@@ -74,7 +77,7 @@ export const UserProvider = (props: any) => {
         });
     return (
         <UserContext.Provider
-            value={{ isLoggedIn, setIsLoggedIn, login, logout, role, getAllReport, updateStatusReport, doneStatusReport, addReport }}>
+            value={{ isLoggedIn, setIsLoggedIn, login, logout,userName,setUserName, role, getAllReport, updateStatusReport, doneStatusReport, addReport }}>
             {children}
         </UserContext.Provider>
     )

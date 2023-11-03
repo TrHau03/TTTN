@@ -14,7 +14,7 @@ const DangNhap = () => {
     const [modalVisible, setModalVisible] = useState<boolean>(false);
     const [focus, setFocus] = useState<number>(0);
     const [choseSchool, setChoseSchool] = useState<string>('Lựa chọn cơ sở');
-    const { login } = useContext(UserContext);
+    const { login,setUserName } = useContext(UserContext);
 
     const Item = ({ item }: { item: Item }) => {
         return (
@@ -37,6 +37,7 @@ const DangNhap = () => {
             await GoogleSignin.hasPlayServices();
             const { idToken }: any = await GoogleSignin.signIn();
             const userGoogle = await GoogleSignin.signIn();
+            setUserName(userGoogle.user.name);
             if (userGoogle.user.email.includes('fpt.edu.vn')) {
                 
                 // use Google ID token to sign into Realm

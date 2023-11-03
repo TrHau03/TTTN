@@ -1,9 +1,10 @@
 import { FlatList, FlatListProps, Image, ListRenderItem, ListRenderItemInfo, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React from 'react'
+import React, { useContext } from 'react'
 import COLOR, { BG_COLOR, HEIGHT, PADDING_HORIZONTAL, PADDING_TOP, WIDTH } from '../../utilities'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { NativeStackHeaderProps } from '@react-navigation/native-stack'
 import { RootStackTrangChuEnum } from '../../Stack/RootStackTrangChu'
+import { UserContext } from '../../provider/Provider'
 
 interface SERVICE_ONLINE {
     id: number,
@@ -32,7 +33,7 @@ const RenderItem = (props: any) => {
 }
 
 const TrangChu = ({ navigation }: NativeStackHeaderProps) => {
-
+    const {userName} = useContext(UserContext);
 
 
     return (
@@ -40,7 +41,7 @@ const TrangChu = ({ navigation }: NativeStackHeaderProps) => {
             <View style={{ justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}>
                 <View style={{ alignItems: 'center', flexDirection: 'column' }}>
                     <Image style={{ width: 50, height: 50, backgroundColor: COLOR.white, borderRadius: 50 }} source={require('../../assets/logo.png')} />
-                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: COLOR.white, marginTop: 10 }}>Lê Trung Hậu Nhỏ</Text>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: COLOR.white, marginTop: 10 }}>{userName}</Text>
                 </View>
                 <Pressable onPress={() => navigation.navigate(RootStackTrangChuEnum.ThongBao)} style={{ position: 'absolute', right: 0 }}>
                     <Icon name='bell-outline' size={30} color={COLOR.white} />
