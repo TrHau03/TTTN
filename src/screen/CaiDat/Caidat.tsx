@@ -8,14 +8,14 @@ import { UserContext } from '../../provider/Provider'
 const CaiDat = () => {
     const [isSwitchOn, setIsSwitchOn] = useState<boolean>(false);
 
-    const { logout } = useContext(UserContext);
+    const { logout , userGoogle} = useContext(UserContext);
     return (
         <View style={{ backgroundColor: BG_COLOR, width: WIDTH, height: HEIGHT, paddingHorizontal: PADDING_HORIZONTAL, paddingTop: PADDING_TOP }}>
             <Icon name='chevron-back' size={26} color={COLOR.white} />
             <View style={{ justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}>
                 <View style={{ alignItems: 'center', flexDirection: 'column' }}>
-                    <Image style={{ width: 100, height: 100, backgroundColor: COLOR.white, borderRadius: 50 }} source={require('../../assets/logo.png')} />
-                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: COLOR.white, marginTop: 10 }}>Lê Trung Hậu Nhỏ</Text>
+                    <Image style={{ width: 100, height: 100, backgroundColor: COLOR.white, borderRadius: 50 }} source={{uri: userGoogle.user.photo}} />
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: COLOR.white, marginTop: 10 }}>{userGoogle.user.name}</Text>
                     <Text style={{ fontSize: 16, color: COLOR.white, marginTop: 10 }}>0345625243</Text>
                 </View>
             </View>

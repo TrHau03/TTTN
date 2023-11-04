@@ -26,6 +26,7 @@ import { NativeStackHeaderProps } from '@react-navigation/native-stack';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import storage from '@react-native-firebase/storage';
 import { UserContext } from '../../provider/Provider';
+import Spinner from 'react-native-loading-spinner-overlay';
 interface Report {
   id: number;
   name: string;
@@ -33,7 +34,7 @@ interface Report {
   vector: any;
   description: string;
 }
-const image: any = [];
+let image: any = [];
 let imageURL: any = [];
 
 const renderItem = ({ item }: any) => {
@@ -49,7 +50,7 @@ const renderItem = ({ item }: any) => {
 
 const Report = (props: any) => {
   const { navigation }: NativeStackHeaderProps = props;
-  const { addReport } = useContext(UserContext);
+  const { addReport,isLoaddingAddReport ,setIsLoaddingAddReport} = useContext(UserContext);
   const [inputText, setInputText] = useState('');
   const [selected, setSelected] = React.useState('');
 
@@ -62,6 +63,7 @@ const Report = (props: any) => {
 
   const handleReport = async () => {
     try {
+      setIsLoaddingAddReport(true);
       const uploadImages = async () => {
         await Promise.all(image.map(async (element: any) => {
           const reference = storage().ref(`${uuid.v4()}.jpg`);
@@ -73,6 +75,7 @@ const Report = (props: any) => {
       await uploadImages();
       await addReport({ inputText, selected, imageURL, description });
       imageURL = [];
+      image = [];
       setAddImage(!addImage);
       navigation.goBack();
     } catch (error) {
@@ -141,6 +144,11 @@ const Report = (props: any) => {
       {/* <Pressable onPress={() => navigation.goBack()}>
                 <Icon name='chevron-back' size={26} />
             </Pressable> */}
+      <Spinner
+        visible={isLoaddingAddReport}
+        textContent={'Loading...'}
+        textStyle={{ color: COLOR.white }}
+      />
       <Text
         style={{
           color: 'red',
@@ -155,7 +163,6 @@ const Report = (props: any) => {
       <View style={styles.text}>
         <TextInput placeholder="Phòng" value={inputText} onChangeText={setInputText} />
       </View>
-
       <View style={styles.dropdown}>
         <SelectList
           setSelected={(val: any) => setSelected(val)}
@@ -163,7 +170,6 @@ const Report = (props: any) => {
           save="value"
           placeholder="Sự cố đang gặp phải"
         />
-
         <View style={styles.description}>
           <TextInput
             multiline

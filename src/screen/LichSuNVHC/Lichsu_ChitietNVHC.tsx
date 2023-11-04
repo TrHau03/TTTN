@@ -11,10 +11,8 @@ type Props = NativeStackScreenProps<RootStackParamListLichSu>;
 
 
 
-const Lichsu_Chitiet = ({ route, navigation }: Props) => {
+const Lichsu_ChitietNVHC = ({ route, navigation }: Props) => {
     const { item } = route?.params as any;
-    console.log(item);
-
     const idReport = item._id
     const { evaluateReport } = useContext(UserContext);
 
@@ -23,16 +21,14 @@ const Lichsu_Chitiet = ({ route, navigation }: Props) => {
     const [modalVisible, setModalVisible] = useState<boolean>(false);
     const [rating, setRating] = useState<number>(0);
     const [evaluate, setEvaluate] = useState<string>('');
-    const [enableBtn, setEnableBtn] = useState<boolean>(item.evaluate ? true : false);
+    const [enableBtn, setEnableBtn] = useState<boolean>(false);
+
     const handleEvaluteReport = async () => {
-        const response = await evaluateReport({ rating, evaluate, idReport });
-        if (response) {
-            setEnableBtn(true);
-        }
+        await evaluateReport({ rating, evaluate, idReport });
         setModalVisible(!modalVisible);
+        setEnableBtn(true);
     }
     const renderLabel = (e: any) => {
-
         return (
             <View style={{ flexDirection: 'row', alignItems: 'center', marginLeft: 10, columnGap: 10 }}>
                 {e.position == 0 ?
@@ -53,7 +49,7 @@ const Lichsu_Chitiet = ({ route, navigation }: Props) => {
                         fontSize: 16,
                         fontFamily: 'Poppins',
                         fontWeight: '400',
-                    }}>{e.position == 0 ? item.status1.time : e.position == 1 ? item?.status2?.time : e.position == 2 ? item?.status2?.time : '--:--'}    {e.position == 0 ? item.status1.date : e.position == 1 ? item?.status2?.date : e.position == 2 ? item?.status3?.date : '--:--'}</Text>
+                    }}>{e.position == 0 ? item.status1.time : e.position == 1 ? item?.status2?.time : item?.status3?.time}    {e.position == 0 ? item.status1.date : e.position == 1 ? item?.status2?.date : item?.status3?.date}</Text>
                 </View>
             </View>
         )
@@ -127,30 +123,19 @@ const Lichsu_Chitiet = ({ route, navigation }: Props) => {
                     renderStepIndicator={(e) => e.stepStatus === 'finished' || e.stepStatus === 'current' ? <Icon name='checkmark-sharp' size={16} /> : <></>}
                 />
             </View>
-            {currentPosition >= 3 ?
-                enableBtn ?
-                    <View style={{ width: '100%', height: 'auto', paddingVertical: 10, borderRadius: 10, backgroundColor: '#e4e4e4', alignSelf: 'center', position: 'absolute', bottom: 100 }}>
-                        <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-                            <Text style={{ fontSize: 16 }}>Đánh giá : </Text>
-                            <StarRating rating={item.start ? item.start : rating} enableSwiping onChange={() => undefined} />
-                        </View>
-                        <Text style={{ alignSelf: 'center', fontSize: 16 }}>{item.evaluate ? item.evaluate : evaluate}</Text>
-                    </View>
-                    : <TouchableOpacity onPress={() => setModalVisible(!modalVisible)} style={{ width: '100%', backgroundColor: currentPosition >= 3 ? COLOR.orange : COLOR.white, position: 'absolute', bottom: HEIGHT * 0.15, alignSelf: 'center', justifyContent: 'center', alignItems: 'center', paddingVertical: 10, borderWidth: 1, borderColor: COLOR.orange, borderRadius: 10 }}>
-                        <Text style={{
-                            color: currentPosition >= 3 ? COLOR.white : COLOR.orange,
-                            fontSize: 16,
-                            fontFamily: 'Poppins',
-                            fontWeight: '700',
-                        }}>Nhận xét</Text>
-                    </TouchableOpacity> : <></>
-            }
+            <View style={{ width: '100%', height: 'auto', paddingVertical: 10, paddingHorizontal: 10, borderRadius: 10, backgroundColor: '#e4e4e4', alignSelf: 'center', position: 'absolute', bottom: 100 }}>
+                <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16 }}>Đánh giá : </Text>
+                    <StarRating rating={item.start} enableSwiping onChange={() => undefined} />
+                </View>
+                <Text style={{ alignSelf: 'center', fontSize: 16 }}>{item.evaluate}</Text>
+            </View>
 
         </View>
     )
 }
 
-export default Lichsu_Chitiet
+export default Lichsu_ChitietNVHC
 
 const styles = StyleSheet.create({
     textBottom: {

@@ -5,6 +5,7 @@ import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-si
 import Realm from 'realm';
 import axios from 'axios';
 import { UserContext } from '../../provider/Provider';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 interface Item {
     id: number;
@@ -14,7 +15,7 @@ const DangNhap = () => {
     const [modalVisible, setModalVisible] = useState<boolean>(false);
     const [focus, setFocus] = useState<number>(0);
     const [choseSchool, setChoseSchool] = useState<string>('Lựa chọn cơ sở');
-    const { login, setUserGoogle } = useContext(UserContext);
+    const { login, setUserGoogle, isLoadding, setIsLoadding } = useContext(UserContext);
 
     const Item = ({ item }: { item: Item }) => {
         return (
@@ -35,20 +36,21 @@ const DangNhap = () => {
         try {
             // Sign into Google
             await GoogleSignin.hasPlayServices();
+            setIsLoadding(true);
             const { idToken }: any = await GoogleSignin.signIn();
             const userGoogle = await GoogleSignin.signIn();
             console.log(userGoogle);
             setUserGoogle(userGoogle);
             if (userGoogle.user.email.includes('fpt.edu.vn')) {
-                
+
                 // use Google ID token to sign into Realm
                 const credential = Realm.Credentials.google({ idToken });
                 const user = await app.logIn(credential);
                 if (user) {
-                    login(userGoogle.user.name, userGoogle.user.email,userGoogle.user.photo);
+                    await login(userGoogle.user.name, userGoogle.user.email, userGoogle.user.photo);
                 }
             } else {
-            await GoogleSignin.revokeAccess();
+                await GoogleSignin.revokeAccess();
                 console.error("Please, use email FPT");
             }
 
@@ -85,6 +87,11 @@ const DangNhap = () => {
                     </View>
                 </View>
             </Modal>
+            <Spinner
+                visible={isLoadding}
+                textContent={'Loading...'}
+                textStyle={{ color: COLOR.white }}
+            />
             <View style={{ position: 'absolute', top: 0, height: HEIGHT / 3, width: WIDTH, backgroundColor: BG_COLOR, borderBottomLeftRadius: 35, borderBottomRightRadius: 35 }}>
             </View>
             <View style={{ alignItems: 'center', backgroundColor: COLOR.white, borderRadius: 20, borderWidth: 0.5, borderColor: '#d7d7d7', width: WIDTH / 1.3, height: HEIGHT / 2, alignSelf: 'center' }}>

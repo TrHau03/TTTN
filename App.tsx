@@ -23,13 +23,10 @@ import {
   View,
 } from 'react-native';
 import { BottomTab } from './src/Tab/TabNavigation';
-import { DefaultTheme, Provider } from 'react-native-paper';
+import { Provider } from 'react-native-paper';
 import DangNhap from './src/screen/DangNhap/Dangnhap';
 import { BG_COLOR } from './src/utilities';
-import DangTiepNhan from './src/screen/TrangChuNVHC/DangTiepNhan';
-import CTYeuCau from './src/screen/TrangChuNVHC/CTYeuCau';
 import { UserContext, UserProvider } from './src/provider/Provider';
-
 const Navigation = () => {
   const { isLoggedIn } = useContext(UserContext);
   return !isLoggedIn ? <DangNhap /> :

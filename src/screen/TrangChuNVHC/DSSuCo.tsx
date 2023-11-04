@@ -1,10 +1,11 @@
-import { StyleSheet, Text, View, useWindowDimensions } from 'react-native'
+import { Pressable, StyleSheet, Text, View, useWindowDimensions } from 'react-native'
 import React from 'react'
 import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
 import HienCo from './HienCo';
 import DangTiepNhan from './DangTiepNhan';
 import { NativeStackHeaderProps } from '@react-navigation/native-stack';
-import { WIDTH } from '../../utilities';
+import COLOR, { WIDTH } from '../../utilities';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 const renderScene = SceneMap({
     HienCo: HienCo,
@@ -22,19 +23,26 @@ const DSSuCo = ({ navigation }: NativeStackHeaderProps) => {
     ]);
 
     return (
+
         <TabView
             navigationState={{ index, routes }}
             renderScene={renderScene}
             onIndexChange={setIndex}
             initialLayout={{ width: WIDTH }}
             renderTabBar={(props) => (
-                <TabBar
-                    {...props}
-                    indicatorStyle={{ backgroundColor: 'white' }}
-                    style={{ backgroundColor: '#FFA500', margin: 10, borderRadius: 10 }}
-                />
+                <View>
+                    <Pressable onPress={() => navigation.goBack()} style={{paddingTop: 20, paddingLeft: 10}}>
+                        <Icon name='chevron-back' size={26} color={COLOR.orange} />
+                    </Pressable>
+                    <TabBar
+                        {...props}
+                        indicatorStyle={{ backgroundColor: 'white' }}
+                        style={{ backgroundColor: '#FFA500', margin: 10, borderRadius: 10 }}
+                    />
+                </View>
             )}
         />
+
     )
 }
 

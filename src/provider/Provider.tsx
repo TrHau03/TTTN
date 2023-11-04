@@ -5,12 +5,13 @@ import { createContext, useState } from "react";
 export const UserContext = createContext<any>({});
 export const UserProvider = (props: any) => {
     const { children } = props;
-    console.log(props);
-
     const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
     const [role, setRole] = useState<number>();
     const [idReportRecipient, setIdReportRecipient] = useState<string>('');
     const [userGoogle, setUserGoogle] = useState<Object>();
+    const [isLoadding, setIsLoadding] = useState<boolean>(false);
+    const [isLoaddingAddReport, setIsLoaddingAddReport] = useState<boolean>(false);
+
     const login = (userName: any, email: any, avatar: any) => {
         console.log(avatar);
         axios({
@@ -24,11 +25,10 @@ export const UserProvider = (props: any) => {
             responseType: 'json'
         })
             .then(function (response) {
-                console.log(response.data);
+                setIsLoadding(false);
                 setIsLoggedIn(true);
                 setRole(response.data.role);
                 setIdReportRecipient(response.data.idUser);
-                console.log(response.data);
 
                 return response.data;
             });
@@ -45,7 +45,6 @@ export const UserProvider = (props: any) => {
         responseType: 'json'
     })
         .then(function (response) {
-
             return response.data;
         });
     const getReportByID = () => axios({
@@ -73,9 +72,7 @@ export const UserProvider = (props: any) => {
         .then(function (response) {
             return response.data;
         });
-    const addReport = ({ inputText, selected, imageURL, description }: any) => {
-        console.log("Array URL", imageURL);
-
+    const addReport = ({ inputText, selected, imageURL, description }: any) =>
         axios({
             method: 'post',
             url: `https://tttn-api-86140b31a001.herokuapp.com/users/addReport`,
@@ -89,30 +86,34 @@ export const UserProvider = (props: any) => {
             },
         })
             .then(function (response) {
-                return response;
-            });
-    }
-    const evaluateReport = ({ rating, evaluate, idReport }: any) => {
-        console.log(rating, evaluate, idReport);
-        
-        axios({
-            method: 'post',
-            url: `https://tttn-api-86140b31a001.herokuapp.com/users/evaluate/${idReport}`,
-            responseType: 'json',
-            data: {
-                start: rating,
-                evaluate: evaluate,
-            },
-        })
-            .then(function (response) {
-                console.log(response.data);
-                
+                setIsLoaddingAddReport(false)
                 return response.data;
             });
-    }
+
+    const evaluateReport = ({ rating, evaluate, idReport }: any) => axios({
+        method: 'post',
+        url: `https://tttn-api-86140b31a001.herokuapp.com/users/evaluate/${idReport}`,
+        responseType: 'json',
+        data: {
+            start: rating,
+            evaluate: evaluate,
+        },
+    })
+        .then(function (response) {
+            return response.data;
+        });
+    const getReportByAnnunciator = () => axios({
+        method: 'get',
+        url: `https://tttn-api-86140b31a001.herokuapp.com/users/getReportByReportRecipient/${idReportRecipient}`,
+        responseType: 'json',
+    })
+        .then(function (response) {
+            return response.data;
+        });
+
     return (
         <UserContext.Provider
-            value={{ isLoggedIn, setIsLoggedIn, login, logout, userGoogle, setUserGoogle, role, getAllReport,getReportByID, updateStatusReport, doneStatusReport, addReport, evaluateReport }}>
+            value={{ isLoggedIn, setIsLoggedIn, isLoadding, setIsLoadding,isLoaddingAddReport,setIsLoaddingAddReport, login, logout, userGoogle, setUserGoogle, role, getAllReport, getReportByID, updateStatusReport, doneStatusReport, addReport, evaluateReport, getReportByAnnunciator }}>
             {children}
         </UserContext.Provider>
     )

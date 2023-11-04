@@ -14,16 +14,16 @@ import { useIsFocused } from '@react-navigation/native';
 
 
 
-const RenderItem = ({ data, navigation, getData }: any) => {
+const RenderItem = ({ data, navigation }: any) => {
   const { item } = data;
   return (
-    <Pressable onPress={() => navigation.navigate(RootStackTrangChuNVHCEnum.CTYeuCau, { item: item, getData: getData })} style={styles.containerPD}>
+    <Pressable onPress={() => navigation.navigate(RootStackTrangChuNVHCEnum.CTYeuCau, { item: item })} style={styles.containerPD}>
       <View style={styles.title}>
         <Text style={{ fontSize: 17, fontWeight: '700', color: 'black' }}>{item.reportType}</Text>
       </View>
       <View style={styles.content}>
         <View style={styles.left}>
-           <Image source={{uri: item.annunciator.avatar}} style={{ width: 50, height: 50 , borderRadius: 50 }} /> 
+          <Image source={{ uri: item.annunciator.avatar }} style={{ width: 50, height: 50, borderRadius: 50 }} />
         </View>
         <View style={styles.right}>
           <Text style={{ fontSize: 16, fontWeight: '500', color: 'black' }}>{item.annunciator.userName}</Text>

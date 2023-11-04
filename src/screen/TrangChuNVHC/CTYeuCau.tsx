@@ -12,6 +12,8 @@ import SelectDropdown from 'react-native-select-dropdown';
 import { UserContext } from '../../provider/Provider';
 import { NativeStackHeaderProps } from '@react-navigation/native-stack';
 import { RootStackTrangChuNVHCEnum } from '../../Stack/RootStackTrangChuNVHC';
+import COLOR, { HEIGHT, WIDTH } from '../../utilities';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 const CTYeuCau = (props: NativeStackHeaderProps) => {
   console.log(props.route.params);
@@ -33,14 +35,25 @@ const CTYeuCau = (props: NativeStackHeaderProps) => {
   }
   return (
     <View style={styles.container}>
+      <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', paddingVertical: 10 }}>
+        <Pressable onPress={() => navigation.goBack()} style={{ position: 'absolute', left: 10 }}>
+          <Icon name='chevron-back' size={26} color={COLOR.orange} />
+        </Pressable>
+        <Text style={{
+          color: 'black',
+          fontSize: 16,
+          fontFamily: 'Poppins',
+          fontWeight: '700',
+        }}>{item.reportType}</Text>
+      </View>
       <Text style={{ fontSize: 16, color: 'black', fontWeight: '400' }}>
         Tên người yêu cầu:
       </Text>
       <View style={styles.detail}>
         <View style={styles.img}>
           <Image
-            source={require('../../assets/Profile.png')}
-            style={{ width: 50, height: 50 }}
+            source={{ uri: item.annunciator.avatar }}
+            style={{ width: 50, height: 50, borderRadius: 50 }}
           />
         </View>
         <View style={styles.text}>
@@ -48,7 +61,7 @@ const CTYeuCau = (props: NativeStackHeaderProps) => {
             {item.annunciator.userName}
           </Text>
           <Text style={{ fontSize: 16, color: 'black', fontWeight: '400' }}>
-            01234567
+            {item.annunciator.sdt}
           </Text>
         </View>
         <TouchableOpacity style={styles.img}>
@@ -144,7 +157,7 @@ const CTYeuCau = (props: NativeStackHeaderProps) => {
             </Text>
           </TouchableOpacity>
         </View>
-        : <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-between' }}>
+        : <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-between', position: 'absolute', bottom: 100, alignSelf: 'center' }}>
           <TouchableOpacity onPress={handleDone} style={styles.btnHoanThanh}>
             <Text style={{ color: 'white', fontWeight: '700', fontSize: 18 }}>Hoàn thành</Text>
           </TouchableOpacity>
@@ -163,7 +176,6 @@ export default CTYeuCau;
 
 const styles = StyleSheet.create({
   btnChuaXuLy: {
-    marginTop: 50,
     width: '48%',
     height: 50,
     backgroundColor: 'red',
@@ -172,7 +184,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   btnHoanThanh: {
-    marginTop: 50,
     width: '48%',
     height: 50,
     backgroundColor: 'green',
@@ -216,7 +227,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   container: {
-    width: '100%',
+    width: WIDTH,
+    height: HEIGHT,
     padding: 15,
   },
 });

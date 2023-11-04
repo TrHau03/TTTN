@@ -6,6 +6,7 @@ import { NativeStackHeaderProps } from '@react-navigation/native-stack'
 import { RootStackLichSuEnum } from '../../Stack/RootStackLichSu'
 import { UserContext } from '../../provider/Provider'
 import { useIsFocused } from '@react-navigation/native'
+import { RootStackLichSuNVHCEnum } from '../../Stack/RootStackLichSuNVHC'
 
 
 interface LichSu {
@@ -21,7 +22,7 @@ const RenderItem = (props: any) => {
     const { item } = props.data;
     const { navigation }: NativeStackHeaderProps = props;
     return (
-        <Pressable onPress={() => navigation.navigate(RootStackLichSuEnum.LichSu_ChiTiet, { item: item })} style={{ flexDirection: 'row', paddingHorizontal: PADDING_HORIZONTAL, alignItems: 'center', width: WIDTH, height: HEIGHT / 9, marginBottom: 5, columnGap: 15, borderBottomWidth: 1, borderColor: '#d9d9d9' }}>
+        <Pressable onPress={() => navigation.navigate(RootStackLichSuNVHCEnum.Lichsu_ChitietNVHC, { item: item })} style={{ flexDirection: 'row', paddingHorizontal: PADDING_HORIZONTAL, alignItems: 'center', width: WIDTH, height: HEIGHT / 9, marginBottom: 5, columnGap: 15, borderBottomWidth: 1, borderColor: '#d9d9d9' }}>
             <Image source={{ uri: item.annunciator.avatar }} style={{ width: 60, height: 60, borderRadius: 50, borderWidth: 0.5, borderColor: COLOR.gray }} />
             <View style={{ flexDirection: 'column', justifyContent: 'center', rowGap: 5 }}>
                 <Text style={{ color: '#804F1E', fontSize: 19, fontFamily: 'Helvetica Neue', fontWeight: '700', letterSpacing: 0.60, }}>{item.reportType}</Text>
@@ -34,50 +35,40 @@ const RenderItem = (props: any) => {
         </Pressable>
     )
 }
-const LichSu = ({ navigation }: NativeStackHeaderProps) => {
+const LichsuNVHC = ({ navigation }: NativeStackHeaderProps) => {
     const isFocused = useIsFocused();
-    const { getReportByID, userGoogle } = useContext(UserContext);
+    const { getReportByAnnunciator } = useContext(UserContext);
     const [data, setData] = useState<any>([]);
     useEffect(() => {
-        const fechData = async () => {
-            const response = await getReportByID();
-            setData(response);
+        const getData = async () => {
+            const response = await getReportByAnnunciator();
+            setData(response.filter((item: any) => {
+                return item.status3 != null;
+            }));
         }
         if (isFocused) {
-            fechData();
+            getData();
         }
-    }, [isFocused])
+    }, [isFocused]);
 
     return (
         <View style={{ backgroundColor: BG_COLOR, width: WIDTH, height: HEIGHT, paddingHorizontal: PADDING_HORIZONTAL, paddingTop: PADDING_TOP }}>
-            <View style={{ justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}>
-                <View style={{ alignItems: 'center', flexDirection: 'column' }}>
-                    <Image style={{ width: 50, height: 50, backgroundColor: COLOR.white, borderRadius: 50 }} source={{uri: userGoogle.user.photo}} />
-                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: COLOR.white, marginTop: 10 }}>{userGoogle.user.name}</Text>
-                </View>
-                <View style={{ position: 'absolute', right: 0 }}>
-                    <Icon name='bell-outline' size={30} color={COLOR.white} />
-                </View>
-            </View>
-            <View style={{ backgroundColor: COLOR.white, height: HEIGHT / 1.3, width: WIDTH, position: 'absolute', bottom: 0, borderTopLeftRadius: 35, borderTopRightRadius: 35, alignItems: 'center', paddingVertical: 20, rowGap: 10 }} >
+            <View style={{ backgroundColor: COLOR.white, height: HEIGHT / 1.05, width: WIDTH, position: 'absolute', bottom: 0, borderTopLeftRadius: 35, borderTopRightRadius: 35, alignItems: 'center', paddingVertical: 20, rowGap: 10 }} >
                 <Text style={{ color: '#593E67', fontSize: 24, fontFamily: 'Helvetica Neue', fontWeight: '700' }}>LỊCH SỬ</Text>
-                {data ?
-                    <FlatList
-                        style={{ marginBottom: 55 }}
-                        removeClippedSubviews
-                        maxToRenderPerBatch={6}
-                        data={data}
-                        renderItem={(item) => <RenderItem data={item} navigation={navigation} />}
-                        keyExtractor={(item) => item._id.toString()}
-                    /> :
-                    <Text>Không có gì hết trơn</Text>
-                }
+                <FlatList
+                    style={{ marginBottom: 55 }}
+                    removeClippedSubviews
+                    maxToRenderPerBatch={6}
+                    data={data}
+                    renderItem={(item) => <RenderItem data={item} navigation={navigation} />}
+                    keyExtractor={(item) => item._id.toString()}
+                />
             </View>
         </View>
     )
 }
 
-export default LichSu
+export default LichsuNVHC
 
 const styles = StyleSheet.create({
     textBottom: {

@@ -41,7 +41,7 @@ const RenderItem = ({ data, navigation, setRender }: any) => {
       </View>
       <View style={styles.content}>
         <View style={styles.left}>
-          {/* <Image source={img} style={{ width: 50, height: 50 }} /> */}
+          <Image source={{ uri: item.annunciator.avatar }} style={{ width: 50, height: 50, borderRadius: 50 }} />
         </View>
         <View style={styles.right}>
           <Text style={{ fontSize: 16, fontWeight: '500', color: 'black' }}>{item.annunciator.userName}</Text>
@@ -59,12 +59,12 @@ const DangTiepNhan = (props: any) => {
   const isFocused = useIsFocused();
   const { navigation } = props?.route;
 
-  const { getAllReport } = useContext(UserContext);
+  const { getReportByAnnunciator } = useContext(UserContext);
   const [data, setData] = useState<any>([])
   const getData = async () => {
-    const response = await getAllReport();
+    const response = await getReportByAnnunciator();
     setData(response.filter((item: any) => {
-      return item.status3 == null && item.status2 != null;
+      return item.status3 == null;
     }));
   }
   useEffect(() => {
