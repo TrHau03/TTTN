@@ -50,7 +50,7 @@ const renderItem = ({ item }: any) => {
 
 const Report = (props: any) => {
   const { navigation }: NativeStackHeaderProps = props;
-  const { addReport,isLoaddingAddReport ,setIsLoaddingAddReport} = useContext(UserContext);
+  const { addReport, isLoaddingAddReport, setIsLoaddingAddReport } = useContext(UserContext);
   const [inputText, setInputText] = useState('');
   const [selected, setSelected] = React.useState('');
 
@@ -185,22 +185,18 @@ const Report = (props: any) => {
             justifyContent: 'space-between',
             alignContent: 'center',
           }}>
-          <View style={styles.image}>
-            <TouchableOpacity onPress={requestCameraPermission}>
-              <Image
-                style={{ width: 30, height: 30 }}
-                source={require('../../assets/camera.png')}
-              />
-            </TouchableOpacity>
-          </View>
-          <View style={styles.image}>
-            <TouchableOpacity onPress={requestCameraPermissionPhoto}>
-              <Image
-                style={{ width: 25, height: 25 }}
-                source={require('../../assets/image.png')}
-              />
-            </TouchableOpacity>
-          </View>
+          <TouchableOpacity style={styles.image} onPress={requestCameraPermission}>
+            <Image
+              style={{ width: 30, height: 30 }}
+              source={require('../../assets/camera.png')}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.image} onPress={requestCameraPermissionPhoto}>
+            <Image
+              style={{ width: 25, height: 25 }}
+              source={require('../../assets/image.png')}
+            />
+          </TouchableOpacity>
         </View>
 
         <View>
@@ -265,10 +261,11 @@ const styles = StyleSheet.create({
   },
   image: {
     backgroundColor: '#eaeaea',
-    width: 170,
+    width: '48%',
     height: 40,
     borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
+    flexDirection: 'row',
   },
 });

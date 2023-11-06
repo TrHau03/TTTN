@@ -35,7 +35,7 @@ const TrangChuNVHC = ({ navigation }: NativeStackHeaderProps) => {
     <View style={{ backgroundColor: BG_COLOR, width: WIDTH, height: HEIGHT, paddingHorizontal: PADDING_HORIZONTAL, paddingTop: PADDING_TOP }}>
       <View style={{ justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}>
         <View style={{ alignItems: 'center', flexDirection: 'column' }}>
-          <Image style={{ width: 50, height: 50, backgroundColor: COLOR.white, borderRadius: 50 }} source={require('../../assets/logo.png')} />
+          <Image style={{ width: 50, height: 50, backgroundColor: COLOR.white, borderRadius: 50 }} source={{uri : userGoogle.user.photo}} />
           <Text style={{ fontSize: 20, fontWeight: 'bold', color: COLOR.white, marginTop: 10 }}>{userGoogle.user.name}</Text>
         </View>
         <Pressable onPress={() => navigation.navigate(RootStackTrangChuEnum.ThongBao)} style={{ position: 'absolute', right: 0 }}>
