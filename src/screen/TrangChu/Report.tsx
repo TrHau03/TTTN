@@ -6,7 +6,7 @@ import {
   ScrollView,
   Image,
   TouchableOpacity
-} from 'react-native';
+} from n;
 import React, { useState } from 'react';
 import { Button } from 'react-native-paper';
 import ImagePicker from 'react-native-image-picker';
