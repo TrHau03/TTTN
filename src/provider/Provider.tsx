@@ -11,7 +11,7 @@ export const UserProvider = (props: any) => {
     const [userGoogle, setUserGoogle] = useState<Object>();
     const [isLoadding, setIsLoadding] = useState<boolean>(false);
     const [isLoaddingAddReport, setIsLoaddingAddReport] = useState<boolean>(false);
-
+    const [userResponse, setUserResponse] = useState<any>();
     const login = (userName: any, email: any, avatar: any) => {
         console.log(avatar);
         axios({
@@ -24,20 +24,25 @@ export const UserProvider = (props: any) => {
             },
             responseType: 'json'
         })
-            .then(function (response) {
-                setIsLoadding(false);
-                setIsLoggedIn(true);
-                setRole(response.data.role);
-                setIdReportRecipient(response.data.idUser);
-
+            .then(async function (response) {
+                if (!response?.data?.lock) {
+                    setUserResponse(response?.data);
+                    setIsLoadding(false);
+                    setIsLoggedIn(true);
+                    setRole(response.data.role);
+                    setIdReportRecipient(response.data.idUser);
+                } else {
+                    console.warn('Account had been');
+                    setIsLoadding(false);
+                    await GoogleSignin.signOut();
+                }
                 return response.data;
             });
     }
     const logout = async () => {
-        setIsLoggedIn(false);
         await GoogleSignin.revokeAccess();
         await GoogleSignin.signOut();
-
+        setIsLoggedIn(false);
     }
     const getAllReport = () => axios({
         method: 'get',
@@ -110,10 +115,22 @@ export const UserProvider = (props: any) => {
         .then(function (response) {
             return response.data;
         });
-
+    const addNumberPhone = (sdt: number) => axios({
+        method: 'post',
+        url: `https://tttn-api-86140b31a001.herokuapp.com/users/profile`,
+        data: {
+            id: idReportRecipient,
+            sdt: sdt,
+        },
+        responseType: 'json',
+    })
+        .then(function (response) {
+            setUserResponse(response.data)
+            return response.data;
+        });
     return (
         <UserContext.Provider
-            value={{ isLoggedIn, setIsLoggedIn, isLoadding, setIsLoadding,isLoaddingAddReport,setIsLoaddingAddReport, login, logout, userGoogle, setUserGoogle, role, getAllReport, getReportByID, updateStatusReport, doneStatusReport, addReport, evaluateReport, getReportByAnnunciator }}>
+            value={{ isLoggedIn, setIsLoggedIn, isLoadding, setIsLoadding, isLoaddingAddReport, setIsLoaddingAddReport, login, logout, userGoogle, setUserGoogle, role, getAllReport, getReportByID, updateStatusReport, doneStatusReport, addReport, evaluateReport, getReportByAnnunciator, userResponse, addNumberPhone }}>
             {children}
         </UserContext.Provider>
     )
