@@ -10,17 +10,19 @@ import Spinner from 'react-native-loading-spinner-overlay';
 interface Item {
     id: number;
     name: string;
+    familyName: string;
 }
 const DangNhap = () => {
     const [modalVisible, setModalVisible] = useState<boolean>(false);
     const [focus, setFocus] = useState<number>(0);
     const [choseSchool, setChoseSchool] = useState<string>('Lựa chọn cơ sở');
+    const [familySchool, setFamilySchool] = useState<string>('');
     const { login, setUserGoogle, isLoadding, setIsLoadding } = useContext(UserContext);
 
     const Item = ({ item }: { item: Item }) => {
         return (
-            <Pressable onPress={() => { setFocus(item.id), setChoseSchool(item.name) }} style={{ maxWidth: '100%', borderBottomWidth: 1, alignItems: 'center' }}>
-                <Text style={[{ fontSize: 17, fontWeight: '500', color: focus === item.id ? '#ff8800' : '#626262' },]}>{item.name}</Text>
+            <Pressable onPress={() => { setFocus(item.id), setChoseSchool(item.name), setFamilySchool(item.familyName) }} style={{ maxWidth: '100%', borderBottomWidth: 1, alignItems: 'center', borderColor: focus === item.id ? '#ff8800' : '#626262' }}>
+                <Text style={[{ fontSize: 18, fontWeight: '500', color: focus === item.id ? '#ff8800' : '#626262' },]}>{item.name}</Text>
             </Pressable>
         )
     }
@@ -35,29 +37,37 @@ const DangNhap = () => {
         // Check if your device supports Google Play
         try {
             // Sign into Google
-            await GoogleSignin.hasPlayServices();
+            const playService = await GoogleSignin.hasPlayServices();
+
+            if (!playService) return;
             setIsLoadding(true);
             const { idToken }: any = await GoogleSignin.signIn();
             const userGoogle = await GoogleSignin.signIn();
-            console.log(userGoogle);
             setUserGoogle(userGoogle);
             if (userGoogle.user.email.includes('fpt.edu.vn')) {
-
-                // use Google ID token to sign into Realm
-                const credential = Realm.Credentials.google({ idToken });
-                const user = await app.logIn(credential);
-                if (user) {
-                    await login(userGoogle.user.name, userGoogle.user.email, userGoogle.user.photo);
+                if (userGoogle.user.familyName?.includes(familySchool) && familySchool != "") {
+                    // use Google ID token to sign into Realm
+                    const credential = Realm.Credentials.google({ idToken });
+                    const user = await app.logIn(credential);
+                    if (user) {
+                        await login(userGoogle.user.name, userGoogle.user.email, userGoogle.user.photo);
+                    }
+                } else {
+                    await GoogleSignin.revokeAccess();
+                    setIsLoadding(false);
+                    console.error("Chọn đúng cơ sở dùm cái !!!");
                 }
             } else {
                 await GoogleSignin.revokeAccess();
-                console.error("Please, use email FPT");
+                setIsLoadding(false);
+                console.error("Chọn cái Mail fpt.edu.vn dùm cái !!!");
             }
 
         } catch (error: any) {
             // some other error happened
-            await GoogleSignin.revokeAccess();
-            console.error("Please, use email FPT", error);
+            console.log(error);
+            setIsLoadding(false);
+            console.error("Có cái gì đó sai sai nè !!!");
         }
     }
     return (
@@ -73,7 +83,7 @@ const DangNhap = () => {
                 }}>
                 <View style={styles.centeredView}>
                     <View style={styles.modalView}>
-                        <View style={{ rowGap: 10 }}>
+                        <View style={{ rowGap: 20 }}>
                             {data.map((item: any) => {
                                 return <Item item={item} key={item.id} />
                             }
@@ -97,7 +107,7 @@ const DangNhap = () => {
             <View style={{ alignItems: 'center', backgroundColor: COLOR.white, borderRadius: 20, borderWidth: 0.5, borderColor: '#d7d7d7', width: WIDTH / 1.3, height: HEIGHT / 2, alignSelf: 'center' }}>
                 <Image style={{ width: 180, height: 90, marginTop: 30 }} source={require('../../assets/logo.png')} />
                 <View style={{ width: '100%', alignItems: 'center', paddingTop: 60, rowGap: 40 }}>
-                    <TouchableOpacity style={[{ width: '80%', height: 'auto', paddingVertical: 5, borderRadius: 10, justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: '#d6d6d6', backgroundColor: '#ececec' }, styles.elevation]}
+                    <TouchableOpacity style={[{ width: '85%', height: 'auto', paddingVertical: 5, borderRadius: 10, justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: '#d6d6d6', backgroundColor: '#ececec', paddingHorizontal: 5 }, styles.elevation]}
                         onPress={() => setModalVisible(true)}>
                         <Text style={{ fontSize: 20, fontWeight: 'bold', color: COLOR.gray }}>{choseSchool}</Text>
                     </TouchableOpacity>
@@ -125,8 +135,8 @@ const styles = StyleSheet.create({
         marginTop: 22,
     },
     modalView: {
-        width: 250,
-        height: 350,
+        width: 300,
+        height: 400,
         backgroundColor: 'white',
         borderRadius: 20,
         paddingHorizontal: 10,
@@ -170,29 +180,40 @@ const data = [
     {
         id: 1,
         name: 'FPT Polytechnic HO',
+        familyName: "FPL HO"
     },
     {
         id: 2,
         name: 'FPT Polytechnic Hà Nội',
+        familyName: "FPL HN"
+
     },
     {
         id: 3,
         name: 'FPT Polytechnic Hồ Chí Minh',
+        familyName: "FPL HCM"
     },
     {
         id: 4,
         name: 'FPT Polytechnic Đà nẵng',
+        familyName: "FPL DN"
     },
     {
         id: 5,
         name: 'FPT Polytechnic Cần thơ',
+        familyName: "FPL CT"
+
     },
     {
         id: 6,
         name: 'FPT Polytechnic Tây Nguyên',
+        familyName: "FPL TN"
+
     },
     {
         id: 7,
         name: 'FPT Polytechnic Hải Phòng',
+        familyName: "FPL HP"
+
     }
 ]

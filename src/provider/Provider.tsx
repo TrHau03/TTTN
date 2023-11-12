@@ -69,14 +69,22 @@ export const UserProvider = (props: any) => {
         .then(function (response) {
             return response.data;
         });
-    const doneStatusReport = (idReport: any) => axios({
-        method: 'post',
-        url: `https://tttn-api-86140b31a001.herokuapp.com/users/completionReport/${idReport}`,
-        responseType: 'json'
-    })
-        .then(function (response) {
-            return response.data;
-        });
+    const doneStatusReport = (idReport: any, errorFrom: any, time: any, note: any) => {
+        console.log(idReport, errorFrom, time, note);
+        return axios({
+            method: 'post',
+            url: `https://tttn-api-86140b31a001.herokuapp.com/users/completionReport/${idReport}`,
+            data: {
+                errorto: errorFrom,
+                timeto: time,
+                note: note,
+            },
+            responseType: 'json'
+        })
+            .then(function (response) {
+                return response.data;
+            });
+    }
     const addReport = ({ inputText, selected, imageURL, description }: any) =>
         axios({
             method: 'post',
@@ -128,9 +136,17 @@ export const UserProvider = (props: any) => {
             setUserResponse(response.data)
             return response.data;
         });
+    const getAllAdmin = () => axios({
+        method: 'get',
+        url: `https://tttn-api-86140b31a001.herokuapp.com/users/getAdmin`,
+        responseType: 'json',
+    })
+        .then(function (response) {
+            return response.data;
+        });
     return (
         <UserContext.Provider
-            value={{ isLoggedIn, setIsLoggedIn, isLoadding, setIsLoadding, isLoaddingAddReport, setIsLoaddingAddReport, login, logout, userGoogle, setUserGoogle, role, getAllReport, getReportByID, updateStatusReport, doneStatusReport, addReport, evaluateReport, getReportByAnnunciator, userResponse, addNumberPhone }}>
+            value={{ isLoggedIn, setIsLoggedIn, isLoadding, setIsLoadding, isLoaddingAddReport, setIsLoaddingAddReport, login, logout, userGoogle, setUserGoogle, role, getAllReport, getReportByID, updateStatusReport, doneStatusReport, addReport, evaluateReport, getReportByAnnunciator, userResponse, addNumberPhone, getAllAdmin }}>
             {children}
         </UserContext.Provider>
     )

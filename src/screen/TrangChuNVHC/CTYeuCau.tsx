@@ -23,14 +23,16 @@ const CTYeuCau = (props: NativeStackHeaderProps) => {
   const { updateStatusReport, doneStatusReport } = useContext(UserContext);
   const loi = ['Lỗi từ phía giảng viên', 'Lỗi từ phía hệ thống', 'Khác'];
   const thoigian = ['15 phút', '30 phút', '1 tiếng', '2 tiếng', '1 ngày',];
-
+  const [errorFrom, setErrorFrom] = useState<string>('');
+  const [time, setTime] = useState<string>('');
+  const [note, setNote] = useState<string>('');
 
   const handleTiepNhan = async () => {
     setStatus(true);
     await updateStatusReport(item._id);
   }
   const handleDone = async () => {
-    await doneStatusReport(item._id);
+    await doneStatusReport(item._id, errorFrom, time, note);
     navigation.goBack();
   }
   return (
@@ -112,6 +114,7 @@ const CTYeuCau = (props: NativeStackHeaderProps) => {
                 defaultButtonText='Lỗi sự cố từ'
                 onSelect={(selectedItem, index) => {
                   console.log(selectedItem, index);
+                  setErrorFrom(selectedItem)
                 }}
 
                 buttonStyle={styles.dropdown3BtnStyle}
@@ -129,6 +132,7 @@ const CTYeuCau = (props: NativeStackHeaderProps) => {
                 //}}
                 onSelect={(selectedItem, index) => {
                   console.log(selectedItem, index);
+                  setTime(selectedItem)
                 }}
                 buttonStyle={styles.dropdown3BtnStyle}
                 rowStyle={styles.dropdown3RowStyle}
@@ -145,6 +149,8 @@ const CTYeuCau = (props: NativeStackHeaderProps) => {
             }}>
             <TextInput
               placeholder="Ghi chú:"
+              value={note}
+              onChangeText={setNote}
               style={{ fontSize: 16, color: 'black', marginLeft: 10 }}></TextInput>
           </View>
         </View>
@@ -158,7 +164,7 @@ const CTYeuCau = (props: NativeStackHeaderProps) => {
           </TouchableOpacity>
         </View>
         : <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-between', position: 'absolute', bottom: 100, alignSelf: 'center' }}>
-          <TouchableOpacity onPress={handleDone} style={styles.btnHoanThanh}>
+          <TouchableOpacity onPress={() => handleDone()} style={styles.btnHoanThanh}>
             <Text style={{ color: 'white', fontWeight: '700', fontSize: 18 }}>Hoàn thành</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.btnChuaXuLy}>

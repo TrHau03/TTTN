@@ -60,7 +60,7 @@ const DangTiepNhan = (props: any) => {
   const { navigation } = props?.route;
 
   const { getReportByAnnunciator } = useContext(UserContext);
-  const [data, setData] = useState<any>([])
+  const [data, setData] = useState<any>([]);
   const getData = async () => {
     const response = await getReportByAnnunciator();
     setData(response.filter((item: any) => {
