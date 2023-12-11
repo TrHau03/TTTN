@@ -50,16 +50,13 @@ const renderItem = ({ item }: any) => {
 
 const Report = (props: any) => {
   const { navigation }: NativeStackHeaderProps = props;
+
   const { addReport, isLoaddingAddReport, setIsLoaddingAddReport } = useContext(UserContext);
   const [inputText, setInputText] = useState('');
   const [selected, setSelected] = React.useState('');
-
-
   const [addImage, setAddImage] = useState<boolean>(false);
-
   const [description, setDescription] = useState('');
-
-
+  
 
   const handleReport = async () => {
     try {
